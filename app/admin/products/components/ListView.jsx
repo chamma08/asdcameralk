@@ -76,7 +76,7 @@ export default function ListView() {
             <th className="font-semibold border-y bg-white px-3 py-2 text-left">
               Status
             </th>
-            <th className="font-semibold border-y bg-white px-3 py-2 border-r rounded-r-lg text-center">
+            <th className="font-semibold border-y bg-white px-3 py-2 border-r rounded-r-lg text-left">
               Actions
             </th>
           </tr>
