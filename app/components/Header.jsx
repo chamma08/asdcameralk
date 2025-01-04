@@ -1,3 +1,4 @@
+import { UserCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react'
 
@@ -52,8 +53,8 @@ export default function Header() {
             title="My Account"
             className="h-8 w-8 flex justify-center items-center rounded-full hover:bg-gray-50"
           >
-            login
-            {/* <UserCircle2 size={14} /> */}
+            
+            <UserCircle2 size={14} />
           </button>
         </Link>
         {/* <AuthContextProvider>

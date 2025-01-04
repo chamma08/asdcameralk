@@ -1,4 +1,4 @@
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 
 
@@ -11,7 +11,7 @@ export const getBrand = async ({ id }) => {
   }
 };
 
-/* export const getBrands = async () => {
+export const getBrands = async () => {
   const list = await getDocs(collection(db, "brands"));
   return list.docs.map((snap) => snap.data());
-}; */
+};
