@@ -30,7 +30,7 @@ export default function FeaturedProductSlider({ featuredProducts }) {
                         {product?.title}
                       </h1>
                     </Link>
-                    <h1 className="text-gray-600 md:text-sm text-xs max-w-96 line-clamp-3">
+                    <h1 className="text-gray-600 md:text-sm text-xs max-w-100 line-clamp-4">
                       {product?.shortDescription}
                     </h1>
                   </div>
