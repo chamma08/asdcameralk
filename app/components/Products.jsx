@@ -37,10 +37,9 @@ export default function ProductsGridView({ products }) {
     <section className="w-full flex justify-center">
       <div className="flex flex-col gap-5 max-w-[900px] p-5">
         <motion.h1
-          variants={fadeUp}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 1 }}
+          variants={fadeUp(0.2)}
+          initial="hidden"
+          whileInView="show"
           className="text-center font-semibold text-lg"
         >
           Products
@@ -60,10 +59,9 @@ export function ProductCard({ product }) {
     <div className="flex flex-col gap-3 border p-4 rounded-lg">
       <div className="relative w-full">
         <motion.img
-          variants={fadeUp}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 1 }}
+          variants={fadeUp(0.5)}
+          initial="hidden"
+          whileInView="show"
           src={product?.featureImageURL}
           className="rounded-lg h-48 w-full object-cover"
           alt={product?.title}
