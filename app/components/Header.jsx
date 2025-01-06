@@ -1,4 +1,4 @@
-import { UserCircle2 } from 'lucide-react';
+import { Search, UserCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react'
 
@@ -42,7 +42,7 @@ export default function Header() {
             title="Search Products"
             className="h-8 w-8 flex justify-center items-center rounded-full hover:bg-gray-50"
           >
-            {/* <Search size={14} /> */}
+            <Search size={14} />
           </button>
         </Link>
         {/* <AuthContextProvider>

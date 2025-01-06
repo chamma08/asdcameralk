@@ -47,7 +47,7 @@ export default function Collections({ collections }) {
   }
 
   return (
-    <div className="overflow-hidden md:p-10 p-5">
+    <div className="overflow-hidden md:p-10 p-5 -z-50">
       <Slider {...settings}>
         {(collections?.length <= 2
           ? [...collections, ...collections, ...collections]
