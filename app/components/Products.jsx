@@ -5,12 +5,46 @@ import { getProductReviewCounts } from "@/lib/firestore/products/count/read";
 import Link from "next/link";
 import React, { Suspense } from "react";
 import MyRating from "./MyRating";
+import { easeInOut, motion } from "framer-motion";
+
+const fadeUp = (delay) => {
+  return {
+    hidden: { opacity: 0, y: 100, scale: 0.5 },
+    show: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        delay: delay,
+        duration: 0.5,
+        ease: easeInOut,
+      },
+    },
+    exit: {
+      opacity: 0,
+      y: 50,
+      scale: 0.5,
+      transition: {
+        duration: 0.5,
+        ease: easeInOut,
+      },
+    },
+  };
+};
 
 export default function ProductsGridView({ products }) {
   return (
     <section className="w-full flex justify-center">
       <div className="flex flex-col gap-5 max-w-[900px] p-5">
-        <h1 className="text-center font-semibold text-lg">Products</h1>
+        <motion.h1
+          variants={fadeUp}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 1 }}
+          className="text-center font-semibold text-lg"
+        >
+          Products
+        </motion.h1>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
           {products?.map((item) => {
             return <ProductCard product={item} key={item?.id} />;
@@ -25,7 +59,11 @@ export function ProductCard({ product }) {
   return (
     <div className="flex flex-col gap-3 border p-4 rounded-lg">
       <div className="relative w-full">
-        <img
+        <motion.img
+          variants={fadeUp}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 1 }}
           src={product?.featureImageURL}
           className="rounded-lg h-48 w-full object-cover"
           alt={product?.title}

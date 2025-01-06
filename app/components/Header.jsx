@@ -1,24 +1,32 @@
-import { Search, UserCircle2 } from 'lucide-react';
-import Link from 'next/link';
-import React from 'react'
+"use client";
+
+import { Search, UserCircle2 } from "lucide-react";
+import Link from "next/link";
+import React from "react";
+import { motion } from "framer-motion";
 
 export default function Header() {
-    const menuList = [
-        {
-          name: "Home",
-          link: "/",
-        },
-        {
-          name: "About",
-          link: "/about-us",
-        },
-        {
-          name: "Contact",
-          link: "/contact-us",
-        },
-      ];
+  const menuList = [
+    {
+      name: "Home",
+      link: "/",
+    },
+    {
+      name: "About",
+      link: "/about-us",
+    },
+    {
+      name: "Contact",
+      link: "/contact-us",
+    },
+  ];
   return (
-    <nav className="sticky top-0 z-50 bg-white bg-opacity-65 backdrop-blur-2xl py-3 px-4 md:py-4 md:px-16 border-b flex items-center justify-between">
+    <motion.nav
+      initial={{ opacity: 0}}
+      whileInView={{ opacity: 1 }}
+      transition={{ delay: 0.5, duration: 1 }}
+      className="sticky top-0 z-50 bg-white bg-opacity-65 backdrop-blur-2xl py-3 px-4 md:py-4 md:px-16 border-b flex items-center justify-between"
+    >
       <Link href={"/"}>
         <img className="h-10 md:h-8" src="/logo.png" alt="Logo" />
       </Link>
@@ -53,7 +61,6 @@ export default function Header() {
             title="My Account"
             className="h-8 w-8 flex justify-center items-center rounded-full hover:bg-gray-50"
           >
-            
             <UserCircle2 size={14} />
           </button>
         </Link>
@@ -61,6 +68,6 @@ export default function Header() {
           <LogoutButton />
         </AuthContextProvider> */}
       </div>
-    </nav>
-  )
+    </motion.nav>
+  );
 }

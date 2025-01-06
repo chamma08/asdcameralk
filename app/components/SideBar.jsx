@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 const SideBar = () => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const Menus = [
     { title: "All Categories", src: "Chart_fill" },
     { title: "Action Camera", src: "Chat" },
@@ -16,9 +16,11 @@ const SideBar = () => {
 
   return (
     <div
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
       className={` ${
-        open ? "w-56 bg-white" : "w-20"
-      } bg-transparent rounded-xl border-2 border-gray-400 mt-2 ml-2 h-50 p-5 z-40  pt-8 fixed duration-50000 `}
+        open ? "w-56 bg-white bg-opacity-50 backdrop-blur-xl" : "w-20"
+      } bg-transparent rounded-xl border-2  border-gray-400 mt-2 ml-1 h-50 p-5 z-30  pt-8 fixed duration-200 `}
     >
       <img
         src="/control.png"

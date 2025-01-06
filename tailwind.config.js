@@ -16,6 +16,20 @@ module.exports = {
         "dark-purple": "#081A51",
         "light-white": "rgba(255,255,255,0.17)",
       },
+      fontFamily: {
+        poppins: ["Poppins", "sans-serif"],
+        varela: ["Varela Round", "sans-serif"],
+      },
+      container: {
+        center: true,
+        padding: {
+          DEFAULT: "1rem",
+          sm: "2rem",
+          lg: "4rem",
+          xl: "5rem",
+          "2xl": "6rem",
+        },
+      },
     },
   },
   darkMode: "class",

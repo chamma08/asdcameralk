@@ -13,6 +13,8 @@ import ProductsGridView from "./components/Products";
 import CustomerReviews from "./components/CustomerReviews";
 import Brands from "./components/Brands";
 import SideBar from "./components/SideBar";
+import Footer from "./components/Footer";
+import Services from "./components/Services";
 
 export default async function Home() {
   const [featuredProducts, collections, categories, products, brands] =
@@ -28,12 +30,13 @@ export default async function Home() {
       <Header />
       <SideBar />
       <FeaturedProductSlider featuredProducts={featuredProducts} />
-
       <Collections collections={collections} />
+      <Services />
       <Categories categories={categories} />
       <ProductsGridView products={products} />
       <CustomerReviews />
       <Brands brands={brands} />
+      <Footer />
     </main>
   );
 }
