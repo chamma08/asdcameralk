@@ -5,6 +5,32 @@ import { collection } from "firebase/firestore";
 import { Heart } from "lucide-react";
 import Link from "next/link";
 import Slider from "react-slick";
+import { easeInOut, motion } from "framer-motion";
+
+const fadeUp = (delay) => {
+  return {
+    hidden: { opacity: 0, y: 100, scale: 0.5 },
+    show: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        delay: delay,
+        duration: 0.5,
+        ease: easeInOut,
+      },
+    },
+    exit: {
+      opacity: 0,
+      y: 50,
+      scale: 0.5,
+      transition: {
+        duration: 0.5,
+        ease: easeInOut,
+      },
+    },
+  };
+};
 
 export default function Collections({ collections }) {
   var settings = {
@@ -48,6 +74,16 @@ export default function Collections({ collections }) {
 
   return (
     <div className="overflow-hidden md:p-10 p-5 -z-50">
+      <div className="text-center mb-4">
+        <motion.h1
+          variants={fadeUp(0.2)}
+          initial="hidden"
+          whileInView="show"
+          className="text-lg md:text-lg font-semibold"
+        >
+          Collections
+        </motion.h1>
+      </div>
       <Slider {...settings}>
         {(collections?.length <= 2
           ? [...collections, ...collections, ...collections]
