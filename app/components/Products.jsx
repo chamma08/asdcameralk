@@ -7,6 +7,7 @@ import React, { Suspense } from "react";
 import MyRating from "./MyRating";
 import { easeInOut, motion } from "framer-motion";
 import FavoriteButton from "./FavoriteButton";
+import AddToCartButton from "./AddToCartButton";
 
 const fadeUp = (delay) => {
   return {
@@ -109,7 +110,7 @@ export function ProductCard({ product }) {
           </Link>
         </div>
         <AuthContextProvider>
-          {/* <AddToCartButton productId={product?.id} /> */}
+          <AddToCartButton productId={product?.id} />
         </AuthContextProvider>
       </div>
     </div>

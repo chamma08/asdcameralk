@@ -6,6 +6,7 @@ import Link from "next/link";
 import React from "react";
 import Slider from "react-slick";
 import FavoriteButton from "./FavoriteButton";
+import AddToCartButton from "./AddToCartButton";
 
 const fadeUp = (delay) => {
   return {
@@ -82,12 +83,12 @@ export default function FeaturedProductSlider({ featuredProducts }) {
                           initial={{ opacity: 0 }}
                           whileInView={{ opacity: 1 }}
                           transition={{ delay: 1, duration: 1 }}
-                          className="bg-blue-500 text-white text-xs md:text-sm px-4 py-1.5 rounded-lg"
+                          className="bg-blue-500 hover:bg-blue-900 text-white text-xs md:text-sm px-4 py-1.5 rounded-lg"
                         >
                           BUY NOW
                         </motion.button>
                       </Link>
-                      {/* <AddToCartButton productId={product?.id} type={"large"} /> */}
+                      <AddToCartButton productId={product?.id} type={"large"} />
                       <FavoriteButton productId={product?.id} />
                     </div>
                   </AuthContextProvider>
