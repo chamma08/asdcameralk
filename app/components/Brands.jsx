@@ -55,7 +55,7 @@ export default function Brands({ brands }) {
           return (
             <div className="px-2">
               <div className="flex flex-col gap-2 items-center justify-center">
-                <div className="h-20 rounded-lg md:p-5 p-2 overflow-hidden">
+                <div className="h-28 rounded-lg md:p-5 p-2 overflow-hidden">
                   <img
                     className="h-full w-full object-cover"
                     src={brand?.imageURL}
