@@ -1,9 +1,12 @@
 "use client";
 
-import { Search, UserCircle2 } from "lucide-react";
+import { Heart, Search, ShoppingCart, UserCircle2 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { motion } from "framer-motion";
+import AuthContextProvider from "@/context/AuthContext";
+import LogoutButton from "./LogoutButton";
+import HeaderClientButtons from "./HeaderClientButtons";
 
 export default function Header() {
   const menuList = [
@@ -22,7 +25,7 @@ export default function Header() {
   ];
   return (
     <motion.nav
-      initial={{ opacity: 0}}
+      initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       transition={{ delay: 0.5, duration: 1 }}
       className="sticky top-0 z-50 bg-white bg-opacity-65 backdrop-blur-2xl py-3 px-4 md:py-4 md:px-16 border-b flex items-center justify-between"
@@ -50,23 +53,23 @@ export default function Header() {
             title="Search Products"
             className="h-8 w-8 flex justify-center items-center rounded-full hover:bg-gray-50"
           >
-            <Search size={14} />
+            <Search size={16} />
           </button>
         </Link>
-        {/* <AuthContextProvider>
+        <AuthContextProvider>
           <HeaderClientButtons />
-        </AuthContextProvider> */}
+        </AuthContextProvider>
         <Link href={`/login`}>
           <button
             title="My Account"
             className="h-8 w-8 flex justify-center items-center rounded-full hover:bg-gray-50"
           >
-            <UserCircle2 size={14} />
+            <UserCircle2 size={16} />
           </button>
         </Link>
-        {/* <AuthContextProvider>
+        <AuthContextProvider>
           <LogoutButton />
-        </AuthContextProvider> */}
+        </AuthContextProvider>
       </div>
     </motion.nav>
   );

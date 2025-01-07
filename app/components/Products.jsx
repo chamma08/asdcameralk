@@ -6,6 +6,7 @@ import Link from "next/link";
 import React, { Suspense } from "react";
 import MyRating from "./MyRating";
 import { easeInOut, motion } from "framer-motion";
+import FavoriteButton from "./FavoriteButton";
 
 const fadeUp = (delay) => {
   return {
@@ -68,7 +69,7 @@ export function ProductCard({ product }) {
         />
         <div className="absolute top-1 right-1">
           <AuthContextProvider>
-            {/* <FavoriteButton productId={product?.id} /> */}
+            <FavoriteButton productId={product?.id} />
           </AuthContextProvider>
         </div>
       </div>

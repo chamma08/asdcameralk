@@ -103,7 +103,7 @@ export default function Collections({ collections }) {
                   </div>
                   <div className="flex gap-4">
                     <Link href={`/collections/${collection?.id}`}>
-                      <button className="bg-blue-500 text-white text-xs md:text-sm px-4 py-2 rounded-lg">
+                      <button className="bg-blue-500 hover:bg-blue-950 text-white text-xs md:text-sm px-4 py-2 rounded-lg">
                         SHOP NOW
                       </button>
                     </Link>

@@ -5,6 +5,7 @@ import { AnimatePresence, easeIn, easeInOut, motion } from "framer-motion";
 import Link from "next/link";
 import React from "react";
 import Slider from "react-slick";
+import FavoriteButton from "./FavoriteButton";
 
 const fadeUp = (delay) => {
   return {
@@ -86,8 +87,8 @@ export default function FeaturedProductSlider({ featuredProducts }) {
                           BUY NOW
                         </motion.button>
                       </Link>
-                      {/* <AddToCartButton productId={product?.id} type={"large"} />
-                      <FavoriteButton productId={product?.id} /> */}
+                      {/* <AddToCartButton productId={product?.id} type={"large"} /> */}
+                      <FavoriteButton productId={product?.id} />
                     </div>
                   </AuthContextProvider>
                 </div>
