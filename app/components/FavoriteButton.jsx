@@ -9,6 +9,7 @@ import { useState } from "react";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useAuth } from "@/context/AuthContext";
+import toast from "react-hot-toast";
 
 export default function FavoriteButton({ productId }) {
   const { user } = useAuth();

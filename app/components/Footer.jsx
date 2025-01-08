@@ -110,7 +110,7 @@ export default function Footer() {
               <div className="space-y-2">
                 <p>Payment Methods</p>
                 <img
-                  src="/credit-cards.webp"
+                  src="/c1.png"
                   alt="payment"
                   className="w-[80%]"
                 />
