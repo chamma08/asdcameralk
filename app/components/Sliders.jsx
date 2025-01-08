@@ -1,7 +1,7 @@
 "use client";
 
 import AuthContextProvider from "@/context/AuthContext";
-import { AnimatePresence, easeIn, easeInOut, motion } from "framer-motion";
+import { easeIn, easeInOut, motion } from "framer-motion";
 import Link from "next/link";
 import React from "react";
 import Slider from "react-slick";
@@ -74,23 +74,22 @@ export default function FeaturedProductSlider({ featuredProducts }) {
                     </motion.h1>
                   </div>
                   <AuthContextProvider>
-                    <div className="flex items-center gap-4">
+                    <motion.div
+                      variants={fadeUp(0.4)}
+                      initial="hidden"
+                      whileInView="show"
+                      className="flex items-center gap-4"
+                    >
                       <Link
                         href={`/checkout?type=buynow&productId=${product?.id}`}
                       >
-                        <motion.button
-                          variants={fadeUp}
-                          initial={{ opacity: 0 }}
-                          whileInView={{ opacity: 1 }}
-                          transition={{ delay: 1, duration: 1 }}
-                          className="bg-blue-500 hover:bg-blue-900 text-white text-xs md:text-sm px-4 py-1.5 rounded-lg"
-                        >
+                        <button className="bg-blue-500 hover:bg-blue-900 text-white text-xs md:text-sm px-4 py-1.5 rounded-lg">
                           BUY NOW
-                        </motion.button>
+                        </button>
                       </Link>
                       <AddToCartButton productId={product?.id} type={"large"} />
                       <FavoriteButton productId={product?.id} />
-                    </div>
+                    </motion.div>
                   </AuthContextProvider>
                 </div>
                 <div className="">
