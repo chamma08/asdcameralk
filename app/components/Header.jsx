@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import AuthContextProvider from "@/context/AuthContext";
 import LogoutButton from "./LogoutButton";
 import HeaderClientButtons from "./HeaderClientButtons";
+import AdminButton from "./AdminButton";
 
 export default function Header() {
   const menuList = [
@@ -45,9 +46,9 @@ export default function Header() {
         })}
       </div>
       <div className="flex items-center gap-1">
-        {/* <AuthContextProvider>
+        <AuthContextProvider>
           <AdminButton />
-        </AuthContextProvider> */}
+        </AuthContextProvider>
         <Link href={`/search`}>
           <button
             title="Search Products"
