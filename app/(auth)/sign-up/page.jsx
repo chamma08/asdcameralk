@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/lib/firestore/firebase";
 import { createUser } from "@/lib/firestore/user/write";
 import { Button } from "@nextui-org/react";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -41,7 +41,7 @@ export default function Page() {
         photoURL: user?.photoURL,
       });
       toast.success("Successfully Sign Up");
-      router.push("/account");
+      router.push("/");
     } catch (error) {
       toast.error(error?.message);
     }
@@ -97,7 +97,7 @@ export default function Page() {
               onChange={(e) => {
                 handleData("password", e.target.value);
               }}
-              className="px-3 py-2 rounded-xl border focus:outline-none w-full"
+              className="px-3 py-2 rounded-xl mb-4 border focus:outline-none w-full"
             />
             <Button
               color="primary"
@@ -113,10 +113,8 @@ export default function Page() {
             <p className="text-center text-xs">OR</p>
             <hr className="border-gray-400" />
           </div>
-          <Button color="default" className="w-full mt-4">
-            <FcGoogle className="w-6 h-6 mr-2" />
-            Sign Up with Google
-          </Button>
+          
+          <SignInWithGoogleComponent />
 
           <hr className="mt-6 border-gray-400" />
 
@@ -130,5 +128,37 @@ export default function Page() {
         </div>
       </div>
     </section>
+  );
+}
+
+
+function SignInWithGoogleComponent() {
+  const [isLoading, setIsLoading] = useState(false);
+  const handleLogin = async () => {
+    setIsLoading(true);
+    try {
+      const credential = await signInWithPopup(auth, new GoogleAuthProvider());
+      const user = credential.user;
+       await createUser({
+        uid: user?.uid,
+        displayName: user?.displayName,
+        photoURL: user?.photoURL,
+      });
+    } catch (error) {
+      toast.error(error?.message);
+    }
+    setIsLoading(false);
+  };
+  return (
+    <Button
+      isLoading={isLoading}
+      isDisabled={isLoading}
+      onClick={handleLogin}
+      color="default"
+      className="w-full mt-4"
+    >
+      <FcGoogle className="w-6 h-6 mr-2" />
+      Log In with Google
+    </Button>
   );
 }

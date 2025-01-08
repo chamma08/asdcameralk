@@ -1,6 +1,9 @@
 "use client"
 
 import { useAuth } from "@/context/AuthContext";
+import { useReviews } from "@/lib/firestore/reviews/read";
+import { deleteReview } from "@/lib/firestore/reviews/write";
+import { useUser } from "@/lib/firestore/user/read";
 import { Rating } from "@mui/material";
 import { Avatar, Button } from "@nextui-org/react";
 import { Trash2 } from "lucide-react";
@@ -8,10 +11,10 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function Reviews({ productId }) {
-    /* const { data } = useReviews({ productId: productId }); */
+    const { data } = useReviews({ productId: productId });
     const [isLoading, setIsLoading] = useState(false);
     const { user } = useAuth();
-    /* const { data: userData } = useUser({ uid: user?.uid }); */
+    const { data: userData } = useUser({ uid: user?.uid });
   
     const handleDelete = async () => {
       if (!confirm("Are you sure?")) return;
@@ -34,7 +37,7 @@ export default function Reviews({ productId }) {
     return (
       <div className="flex flex-col gap-3 p-3 rounded-xl border w-full">
         <h1 className="text-lg font-semibold">Reviews</h1>
-        {/* <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4">
           {data?.map((item) => {
             return (
               <div className="flex gap-3">
@@ -66,7 +69,7 @@ export default function Reviews({ productId }) {
               </div>
             );
           })}
-        </div> */}
+        </div>
       </div>
     );
   }
