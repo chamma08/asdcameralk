@@ -10,6 +10,36 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
 
+import { motion } from "framer-motion";
+
+const fadeDown = (delay) => {
+  return {
+    hidden: { opacity: 0, y: -100 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: delay,
+        duration: 0.5,
+      },
+    },
+  };
+};
+
+const fadeUp = (delay) => {
+  return {
+    hidden: { opacity: 0, y: 100 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: delay,
+        duration: 0.5,
+      },
+    },
+  };
+};
+
 export default function Page() {
   const { user } = useAuth();
   const router = useRouter();
@@ -41,10 +71,22 @@ export default function Page() {
           <img className="rounded-2xl" src="/f.jpg" alt="Logo" />
         </div>
         <div className="md:w-1/2 px-16">
-          <h2 className="text-2xl font-semibold text-center">Forgot <span className="font-bold">Password</span></h2>
-          <p className="text-sm mt-2 text-center">
+          <motion.h2
+            variants={fadeDown(0.2)}
+            initial="hidden"
+            whileInView="show"
+            className="text-2xl font-semibold text-center"
+          >
+            Forgot <span className="font-bold">Password</span>
+          </motion.h2>
+          <motion.p
+            variants={fadeDown(0.4)}
+            initial="hidden"
+            whileInView="show"
+            className="text-sm mt-2 text-center"
+          >
             Don't worry ! We got you covered
-          </p>
+          </motion.p>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -52,7 +94,10 @@ export default function Page() {
             }}
             className="flex flex-col gap-3"
           >
-            <input
+            <motion.input
+              variants={fadeDown(0.6)}
+              initial="hidden"
+              whileInView="show"
               placeholder="Enter Your Email"
               type="email"
               name="user-email"
@@ -73,25 +118,40 @@ export default function Page() {
               Send Reset Link
             </Button>
           </form>
-          <div className="mt-6 grid grid-cols-3 items-center text-gray-400">
+          <motion.div
+            variants={fadeUp(0.7)}
+            initial="hidden"
+            whileInView="show"
+            className="mt-6 grid grid-cols-3 items-center text-gray-400"
+          >
             <hr className="border-gray-400" />
             <p className="text-center text-xs">OR</p>
             <hr className="border-gray-400" />
-          </div>
+          </motion.div>
 
           <SignInWithGoogleComponent />
 
-          <div className="mt-8 grid grid-cols-3 items-center text-gray-400">
+          <motion.div
+            variants={fadeUp(0.8)}
+            initial="hidden"
+            whileInView="show"
+            className="mt-8 grid grid-cols-3 items-center text-gray-400"
+          >
             <hr className="border-gray-400" />
             <p className="text-center text-xs">OR</p>
             <hr className="border-gray-400" />
-          </div>
+          </motion.div>
 
           <div className="flex justify-center gap-4 mt-6">
             <Link href={`/login`}>
-              <button className="font-semibold text-sm text-blue-700 hover:text-blue-900">
+              <motion.button
+                variants={fadeUp(0.9)}
+                initial="hidden"
+                whileInView="show"
+                className="font-semibold text-sm text-blue-700 hover:text-blue-900"
+              >
                 Sign In
-              </button>
+              </motion.button>
             </Link>
           </div>
         </div>
@@ -107,7 +167,7 @@ function SignInWithGoogleComponent() {
     try {
       const credential = await signInWithPopup(auth, new GoogleAuthProvider());
       const user = credential.user;
-       await createUser({
+      await createUser({
         uid: user?.uid,
         displayName: user?.displayName,
         photoURL: user?.photoURL,

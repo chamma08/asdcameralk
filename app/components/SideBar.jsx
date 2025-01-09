@@ -20,7 +20,7 @@ const SideBar = () => {
       onMouseLeave={() => setOpen(false)}
       className={` ${
         open ? "w-56 bg-white bg-opacity-50 backdrop-blur-xl" : "w-20"
-      } bg-transparent rounded-xl border-2  border-gray-400 mt-2 ml-1 h-50 p-5 z-30  pt-8 fixed duration-200 `}
+      } bg-transparent rounded-xl border-2 border-gray-400 mt-2 ml-1 h-50 p-5 z-30  pt-8 fixed duration-200 `}
     >
       <img
         src="/control.png"

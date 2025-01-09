@@ -1,5 +1,3 @@
-"use client"
-
 import AuthContextProvider from "@/context/AuthContext";
 import { getProduct } from "@/lib/firestore/products/read_server";
 import Photos from "./components/Photos";
@@ -8,7 +6,7 @@ import RelatedProducts from "./components/RelatedProducts";
 import Reviews from "./components/Reviews";
 import AddReview from "./components/AddReview";
 
-/* export async function generateMetadata({ params }) {
+export async function generateMetadata({ params }) {
   const { productId } = params;
   const product = await getProduct({ id: productId });
 
@@ -19,7 +17,7 @@ import AddReview from "./components/AddReview";
       images: [product?.featureImageURL],
     },
   };
-} */
+}
 
 export default async function Page({ params }) {
   const { productId } = params;

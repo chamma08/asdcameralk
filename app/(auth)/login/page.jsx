@@ -46,7 +46,7 @@ export default function page() {
 
   useEffect(() => {
     if (user) {
-      router.push("/account");
+      router.push("/");
     }
   }, [user]);
   return (
@@ -55,25 +55,38 @@ export default function page() {
         <div className="sm:block hidden w-1/2 ">
           <img className="rounded-2xl" src="/login.png" alt="Logo" />
         </div>
-        <motion.div
-          variants={fadeDown(0.4)}
-          initial="hidden"
-          whileInView="show"
-          className="sm:w-1/2 px-16"
-        >
-          <h2 className="text-3xl font-bold text-center">Log In</h2>
-          <p className="text-sm mt-4 text-center">
+        <div className="sm:w-1/2 px-16">
+          <motion.h2
+            variants={fadeDown(0.4)}
+            initial="hidden"
+            whileInView="show"
+            className="text-3xl font-bold text-center"
+          >
+            Log In
+          </motion.h2>
+          <motion.p
+            variants={fadeDown(0.5)}
+            initial="hidden"
+            whileInView="show"
+            className="text-sm mt-4 text-center"
+          >
             Enter your credentials to login
-          </p>
+          </motion.p>
           <form className="flex flex-col gap-3">
-            <input
+            <motion.input
+              variants={fadeDown(0.6)}
+              initial="hidden"
+              whileInView="show"
               placeholder="Enter Your Email"
               type="email"
               name="user-email"
               id="user-email"
               className="mt-8 px-3 py-2 rounded-xl border focus:outline-none w-full"
             />
-            <input
+            <motion.input
+              variants={fadeDown(0.7)}
+              initial="hidden"
+              whileInView="show"
               placeholder="Enter Your Password"
               type="password"
               name="user-password"
@@ -108,7 +121,7 @@ export default function page() {
               </button>
             </Link>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

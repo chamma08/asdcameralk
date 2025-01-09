@@ -1,3 +1,5 @@
+"use client";
+
 import { useAuth } from "@/context/AuthContext";
 import { addReview } from "@/lib/firestore/reviews/write";
 import { useUser } from "@/lib/firestore/user/read";
