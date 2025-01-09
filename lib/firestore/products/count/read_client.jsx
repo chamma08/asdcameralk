@@ -1,6 +1,6 @@
 "use client";
 
-import { collection, getCountFromServer,count,collection,average,getAggregateFromServer } from "firebase/firestore";
+import { getCountFromServer,count,collection,average,getAggregateFromServer } from "firebase/firestore";
 import { db } from "../../firebase";
 import useSWR from "swr";
 

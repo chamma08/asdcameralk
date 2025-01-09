@@ -10,6 +10,35 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
+import { motion } from "framer-motion";
+
+const fadeDown = (delay) => {
+  return {
+    hidden: { opacity: 0, y: -100 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: delay,
+        duration: 0.5,
+      },
+    },
+  };
+};
+
+const fadeUp = (delay) => {
+  return {
+    hidden: { opacity: 0, y: 100 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: delay,
+        duration: 0.5,
+      },
+    },
+  };
+};
 
 export default function page() {
   const { user } = useAuth();
@@ -26,7 +55,12 @@ export default function page() {
         <div className="sm:block hidden w-1/2 ">
           <img className="rounded-2xl" src="/login.png" alt="Logo" />
         </div>
-        <div className="sm:w-1/2 px-16">
+        <motion.div
+          variants={fadeDown(0.4)}
+          initial="hidden"
+          whileInView="show"
+          className="sm:w-1/2 px-16"
+        >
           <h2 className="text-3xl font-bold text-center">Log In</h2>
           <p className="text-sm mt-4 text-center">
             Enter your credentials to login
@@ -57,7 +91,12 @@ export default function page() {
 
           <hr className="mt-6 border-gray-400" />
 
-          <div className="flex justify-between gap-4 mt-2">
+          <motion.div
+            variants={fadeUp(0.8)}
+            initial="hidden"
+            whileInView="show"
+            className="flex justify-between gap-4 mt-2"
+          >
             <Link href={`/sign-up`}>
               <button className="font-semibold text-sm text-blue-700">
                 Create Account
@@ -68,8 +107,8 @@ export default function page() {
                 Forget Password
               </button>
             </Link>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );
@@ -82,7 +121,7 @@ function SignInWithGoogleComponent() {
     try {
       const credential = await signInWithPopup(auth, new GoogleAuthProvider());
       const user = credential.user;
-       await createUser({
+      await createUser({
         uid: user?.uid,
         displayName: user?.displayName,
         photoURL: user?.photoURL,

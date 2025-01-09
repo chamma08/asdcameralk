@@ -4,12 +4,46 @@ import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/lib/firestore/firebase";
 import { createUser } from "@/lib/firestore/user/write";
 import { Button } from "@nextui-org/react";
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  updateProfile,
+} from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
+import { motion } from "framer-motion";
+
+const fadeDown = (delay) => {
+  return {
+    hidden: { opacity: 0, y: -100 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: delay,
+        duration: 0.5,
+      },
+    },
+  };
+};
+
+const fadeUp = (delay) => {
+  return {
+    hidden: { opacity: 0, y: 100 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: delay,
+        duration: 0.5,
+      },
+    },
+  };
+};
 
 export default function Page() {
   const { user } = useAuth();
@@ -55,10 +89,22 @@ export default function Page() {
           <img className="rounded-2xl" src="/sign.jpg" alt="Logo" />
         </div>
         <div className="md:w-1/2 px-16">
-          <h2 className="text-2xl font-bold text-center">Create An Account</h2>
-          <p className="text-sm mt-2 text-center">
+          <motion.h2
+            variants={fadeDown(0.2)}
+            initial="hidden"
+            whileInView="show"
+            className="text-2xl font-bold text-center"
+          >
+            Create An Account
+          </motion.h2>
+          <motion.p
+            variants={fadeDown(0.4)}
+            initial="hidden"
+            whileInView="show"
+            className="text-sm mt-2 text-center"
+          >
             Enter your details to Register
-          </p>
+          </motion.p>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -66,7 +112,10 @@ export default function Page() {
             }}
             className="flex flex-col gap-3"
           >
-            <input
+            <motion.input
+              variants={fadeDown(0.6)}
+              initial="hidden"
+              whileInView="show"
               placeholder="Enter Your Name"
               type="text"
               name="user-name"
@@ -77,7 +126,10 @@ export default function Page() {
               }}
               className="px-3 mt-6 py-2 rounded-xl border focus:outline-none w-full"
             />
-            <input
+            <motion.input
+              variants={fadeDown(0.8)}
+              initial="hidden"
+              whileInView="show"
               placeholder="Enter Your Email"
               type="email"
               name="user-email"
@@ -88,7 +140,10 @@ export default function Page() {
               }}
               className="px-3 py-2 rounded-xl border focus:outline-none w-full"
             />
-            <input
+            <motion.input
+              variants={fadeDown(1.0)}
+              initial="hidden"
+              whileInView="show"
               placeholder="Enter Your Password"
               type="password"
               name="user-password"
@@ -113,16 +168,21 @@ export default function Page() {
             <p className="text-center text-xs">OR</p>
             <hr className="border-gray-400" />
           </div>
-          
+
           <SignInWithGoogleComponent />
 
           <hr className="mt-6 border-gray-400" />
 
           <div className="flex justify-center gap-4 mt-2">
             <Link href={`/login`}>
-              <button className="font-semibold text-sm text-blue-700">
+              <motion.button
+                variants={fadeUp(0.7)}
+                initial="hidden"
+                whileInView="show"
+                className="font-semibold text-sm text-blue-700"
+              >
                 Already Have An Account
-              </button>
+              </motion.button>
             </Link>
           </div>
         </div>
@@ -131,7 +191,6 @@ export default function Page() {
   );
 }
 
-
 function SignInWithGoogleComponent() {
   const [isLoading, setIsLoading] = useState(false);
   const handleLogin = async () => {
@@ -139,7 +198,7 @@ function SignInWithGoogleComponent() {
     try {
       const credential = await signInWithPopup(auth, new GoogleAuthProvider());
       const user = credential.user;
-       await createUser({
+      await createUser({
         uid: user?.uid,
         displayName: user?.displayName,
         photoURL: user?.photoURL,

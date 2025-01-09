@@ -1,8 +1,14 @@
 "use client";
 
+import AddToCartButton from "@/app/components/AddToCartButton";
+import FavoriteButton from "@/app/components/FavoriteButton";
+import MyRating from "@/app/components/MyRating";
+import AuthContextProvider from "@/context/AuthContext";
 import { getBrand } from "@/lib/firestore/brands/read_server";
 import { getCategory } from "@/lib/firestore/categories/read_server";
+import { getProductReviewCounts } from "@/lib/firestore/products/count/read";
 import Link from "next/link";
+import { Suspense } from "react";
 
 
 export default function Details({ product }) {
@@ -13,9 +19,9 @@ export default function Details({ product }) {
         <Brand brandId={product?.brandId} />
       </div>
       <h1 className="font-semibold text-xl md:text-4xl">{product?.title}</h1>
-      {/* <Suspense fallback="Failed To Load">
+      <Suspense fallback="Failed To Load">
         <RatingReview product={product} />
-      </Suspense> */}
+      </Suspense>
       <h2 className="text-gray-600 text-sm line-clamp-3 md:line-clamp-4">
         {product?.shortDescription}
       </h2>
@@ -28,15 +34,15 @@ export default function Details({ product }) {
       <div className="flex flex-wrap items-center gap-4">
         <Link href={`/checkout?type=buynow&productId=${product?.id}`}>
           <button className="bg-black hover:bg-gray-600 text-white rounded-lg px-4 py-1.5">
-            Buy Now
+            Rent Now
           </button>
         </Link>
-        {/* <AuthContextProvider>
+        <AuthContextProvider>
           <AddToCartButton type={"cute"} productId={product?.id} />
-        </AuthContextProvider> */}
-        {/* <AuthContextProvider>
+        </AuthContextProvider>
+        <AuthContextProvider>
           <FavoriteButton productId={product?.id} />
-        </AuthContextProvider> */}
+        </AuthContextProvider>
       </div>
       {product?.stock <= (product?.orders ?? 0) && (
         <div className="flex">
@@ -77,7 +83,7 @@ async function Brand({ brandId }) {
   );
 }
 
-/* async function RatingReview({ product }) {
+async function RatingReview({ product }) {
   const counts = await getProductReviewCounts({ productId: product?.id });
   return (
     <div className="flex gap-3 items-center">
@@ -88,4 +94,4 @@ async function Brand({ brandId }) {
       </h1>
     </div>
   );
-} */
+}
