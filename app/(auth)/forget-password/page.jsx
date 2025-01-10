@@ -3,7 +3,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/lib/firestore/firebase";
 import { Button } from "@nextui-org/react";
-import { sendPasswordResetEmail } from "firebase/auth";
+import { sendPasswordResetEmail, signInWithPopup } from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
