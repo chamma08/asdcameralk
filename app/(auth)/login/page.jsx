@@ -4,7 +4,11 @@ import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/lib/firestore/firebase";
 import { createUser } from "@/lib/firestore/user/write";
 import { Button } from "@nextui-org/react";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import {
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -43,6 +47,27 @@ const fadeUp = (delay) => {
 export default function page() {
   const { user } = useAuth();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [data, setData] = useState({});
+
+  const handleData = (key, value) => {
+    setData({
+      ...data,
+      [key]: value,
+    });
+  };
+
+  const handleLogin = async () => {
+    setIsLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, data?.email, data?.password);
+      toast.success("Logged In Successfully");
+    } catch (error) {
+      toast.error(error?.message);
+    }
+    setIsLoading(false);
+  };
 
   useEffect(() => {
     if (user) {
@@ -72,7 +97,13 @@ export default function page() {
           >
             Enter your credentials to login
           </motion.p>
-          <form className="flex flex-col gap-3">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleLogin();
+            }}
+            className="flex flex-col gap-3"
+          >
             <motion.input
               variants={fadeDown(0.6)}
               initial="hidden"
@@ -81,6 +112,10 @@ export default function page() {
               type="email"
               name="user-email"
               id="user-email"
+              value={data?.email}
+              onChange={(e) => {
+                handleData("email", e.target.value);
+              }}
               className="mt-8 px-3 py-2 rounded-xl border focus:outline-none w-full"
             />
             <motion.input
@@ -91,9 +126,20 @@ export default function page() {
               type="password"
               name="user-password"
               id="user-password"
+              value={data?.password}
+              onChange={(e) => {
+                handleData("password", e.target.value);
+              }}
               className="px-3 py-2 rounded-xl border focus:outline-none w-full"
             />
-            <Button color="primary">Login</Button>
+            <Button
+              isLoading={isLoading}
+              isDisabled={isLoading}
+              type="submit"
+              color="primary"
+            >
+              Login
+            </Button>
           </form>
           <div className="mt-6 grid grid-cols-3 items-center text-gray-400">
             <hr className="border-gray-400" />
