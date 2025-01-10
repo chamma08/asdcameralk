@@ -33,6 +33,8 @@ const fadeUp = (delay) => {
   };
 };
 
+export const dynamic = 'force-dynamic';
+
 export default function FeaturedProductSlider({ featuredProducts }) {
   var settings = {
     dots: true,
