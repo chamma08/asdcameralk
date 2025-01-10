@@ -16,6 +16,8 @@ import SideBar from "./components/SideBar";
 import Footer from "./components/Footer";
 import Services from "./components/Services";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const [featuredProducts, collections, categories, products, brands] =
     await Promise.all([

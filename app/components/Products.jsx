@@ -9,6 +9,8 @@ import { easeInOut, motion } from "framer-motion";
 import FavoriteButton from "./FavoriteButton";
 import AddToCartButton from "./AddToCartButton";
 
+export const dynamic = 'force-dynamic';
+
 const fadeUp = (delay) => {
   return {
     hidden: { opacity: 0, y: 100, scale: 0.5 },
