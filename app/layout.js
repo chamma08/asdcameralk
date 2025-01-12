@@ -18,7 +18,7 @@ const geistMono = localFont({
 
 export const metadata = {
   title: "ASD CAMERA - Best From The Rest",
-  description: "Created By AIR Studios",
+  description: "Created By Matheesha Dissanayake",
 };
 
 export default function RootLayout({ children }) {
