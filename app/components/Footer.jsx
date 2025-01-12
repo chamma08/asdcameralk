@@ -28,12 +28,12 @@ export default function Footer() {
               <div className="space-y-4">
                 <p className="flex items-center gap-2">
                   <FaPhone />
-                  070 300 9000/076 300 9000
+                  070 000 0000/076 000 0000
                 </p>
                 <p className="flex items-center gap-2 mt-2">
                   {" "}
                   <MdEmail />
-                  asdcameralk@gmail.com
+                  matheeshacham08@gmail.com
                 </p>
               </div>
             </motion.div>
@@ -118,7 +118,7 @@ export default function Footer() {
             </motion.div>
           </div>
           <p className="text-center mt-8 border-t-2 border-black pt-8">
-            © 2025 . All Rights Reserved | ASD Camera
+            © 2025 . All Rights Reserved | Matheesha Dissanayake
           </p>
         </div>
       </footer>
