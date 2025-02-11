@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@nextui-org/react";
+import confetti from "canvas-confetti";
 import { CheckSquare2Icon, Square } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -37,6 +38,7 @@ export default function Checkout({ productList }) {
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       toast.success("Order Placed Successfully");
+      confetti();
       router.push("/account");
     } catch (error) {
       toast.error(error.message);
