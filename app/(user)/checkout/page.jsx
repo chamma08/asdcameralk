@@ -6,6 +6,7 @@ import { useUser } from "@/lib/firestore/user/read";
 import { CircularProgress } from "@nextui-org/react";
 import { useSearchParams } from "next/navigation";
 import Checkout from "./components/Checkout";
+import { CreditCard } from "lucide-react";
 
 export default function Page() {
   const { user } = useAuth();
@@ -64,7 +65,7 @@ export default function Page() {
 
   return (
     <main className="p-5 flex flex-col gap-4">
-      <h1 className="text-xl">Checkout</h1>
+      <h1 className="text-2xl font-semibold flex">Checkout <CreditCard className="mt-2 ml-2 font-semibold"/></h1>
        <Checkout productList={productList} />
     </main>
   );
