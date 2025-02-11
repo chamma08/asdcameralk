@@ -30,7 +30,7 @@ export default async function Home() {
   return (
     <main className="w-screen h-screen overflow-x-hidden overflow-y-auto">
       <Header />
-      <SideBar />
+      {/* <SideBar /> */}
       <FeaturedProductSlider featuredProducts={featuredProducts} />
       <Collections collections={collections} />
       <Services />
