@@ -39,7 +39,7 @@ export default function Checkout({ productList }) {
       if (!productList || productList?.length === 0) {
         throw new Error("Product List Is Empty");
       }
-      if (paymentMode === "prepaid") {
+      if (paymentMode === "Pay Now") {
         const url = await createCheckoutAndGetURL({
           uid: user?.uid,
           products: productList,
