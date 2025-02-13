@@ -39,7 +39,7 @@ export const createCheckoutAndGetURL = async ({ uid, products, address }) => {
         uid: uid,
         address: JSON.stringify(address),
       },
-      success_url: `https://${process.env.NEXT_PUBLIC_DOMAIN}/checkout-success?checkout_id=${checkoutId}`,
+      success_url: `${process.env.NEXT_PUBLIC_DOMAIN}/checkout-success?checkout_id=${checkoutId}`,
       cancel_url: `${process.env.NEXT_PUBLIC_DOMAIN}/checkout-failed?checkout_id=${checkoutId}`,
     });
   
