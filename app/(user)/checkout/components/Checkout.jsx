@@ -1,6 +1,10 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
+import {
+  createCheckoutAndGetURL,
+  createCheckoutCODAndGetId,
+} from "@/lib/firestore/checkout/write";
 import { Button } from "@nextui-org/react";
 import confetti from "canvas-confetti";
 import { CheckSquare2Icon, Square } from "lucide-react";
@@ -35,11 +39,23 @@ export default function Checkout({ productList }) {
       if (!productList || productList?.length === 0) {
         throw new Error("Product List Is Empty");
       }
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      toast.success("Order Placed Successfully");
-      confetti();
-      router.push("/account");
+      if (paymentMode === "prepaid") {
+        const url = await createCheckoutAndGetURL({
+          uid: user?.uid,
+          products: productList,
+          address: address,
+        });
+        router.push(url);
+      } else {
+        const checkoutId = await createCheckoutCODAndGetId({
+          uid: user?.uid,
+          products: productList,
+          address: address,
+        });
+        router.push(`/checkout-cod?checkout_id=${checkoutId}`);
+        toast.success("Successfully Placed!");
+        confetti();
+      }
     } catch (error) {
       toast.error(error.message);
     }
