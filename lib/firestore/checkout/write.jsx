@@ -11,7 +11,7 @@ export const createCheckoutAndGetURL = async ({ uid, products, address }) => {
     products.forEach((item) => {
       line_items.push({
         price_data: {
-          currency: "inr",
+          currency: "LKR",
           product_data: {
             name: item?.product?.title ?? "",
             description: item?.product?.shortDescription ?? "",
@@ -98,7 +98,7 @@ export const createCheckoutAndGetURL = async ({ uid, products, address }) => {
     products.forEach((item) => {
       line_items.push({
         price_data: {
-          currency: "inr",
+          currency: "LKR",
           product_data: {
             name: item?.product?.title ?? "",
             description: item?.product?.shortDescription ?? "",
