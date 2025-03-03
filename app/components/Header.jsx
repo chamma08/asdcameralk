@@ -15,10 +15,10 @@ export default function Header() {
       name: "Home",
       link: "/",
     },
-    {
+    /* {
       name: "Products",
       link: "/shop",
-    },
+    }, */
     {
       name: "About",
       link: "/about",
