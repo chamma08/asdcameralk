@@ -37,7 +37,7 @@ export default function Categories({ categories }) {
     dots: true,
     infinite: false,
     speed: 500,
-    slidesToShow: 5,
+    slidesToShow: 7,
     slidesToScroll: 5,
     initialSlide: 0,
     responsive: [
@@ -73,7 +73,7 @@ export default function Categories({ categories }) {
   }
 
   return (
-    <div className="flex flex-col gap-8 justify-center overflow-hidden md:p-10 p-5">
+    <div className="flex flex-col gap-8 justify-center overflow-hidden md:p-8 p-5">
       <div className="flex justify-center w-full">
         <motion.h1
           variants={fadeUp}
@@ -85,32 +85,34 @@ export default function Categories({ categories }) {
           Rent By Category
         </motion.h1>
       </div>
-      <Slider {...settings}>
-        {(categories?.length <= 2
-          ? [...categories, ...categories, ...categories]
-          : categories
-        )?.map((category) => {
-          return (
-            <Link href={`/categories/${category?.id}`}>
-              <div className="px-2">
-                <div className="flex flex-col gap-2 items-center justify-center">
-                  <div className="md:h-32 md:w-32 h-24 w-24 rounded-xl md:p-5 p-2 border overflow-hidden">
-                    <motion.img
-                      variants={fadeUp}
-                      initial={{ opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
-                      transition={{ delay: 1, duration: 1 }}
-                      src={category?.imageURL}
-                      alt=""
-                    />
+      <div className="md:px-4 px-2">
+        <Slider {...settings}>
+          {(categories?.length <= 2
+            ? [...categories, ...categories, ...categories]
+            : categories
+          )?.map((category) => {
+            return (
+              <Link href={`/categories/${category?.id}`}>
+                <div className="md:px-1 px-1">
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="md:h-32 md:w-32 h-24 w-24 rounded-xl md:p-4 p-2 border overflow-hidden">
+                      <motion.img
+                        variants={fadeUp}
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 1, duration: 1 }}
+                        src={category?.imageURL}
+                        alt=""
+                      />
+                    </div>
+                    <h1 className="font-semibold mt-2">{category?.name}</h1>
                   </div>
-                  <h1 className="font-semibold">{category?.name}</h1>
                 </div>
-              </div>
-            </Link>
-          );
-        })}
-      </Slider>
+              </Link>
+            );
+          })}
+        </Slider>
+      </div>
     </div>
   );
 }

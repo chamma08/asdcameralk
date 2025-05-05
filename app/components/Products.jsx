@@ -39,7 +39,7 @@ const fadeUp = (delay) => {
 export default function ProductsGridView({ products }) {
   return (
     <section className="w-full flex justify-center">
-      <div className="flex flex-col gap-5 max-w-[900px] p-5">
+      <div className="flex flex-col gap-5 max-w-[1200px] p-5">
         <motion.h1
           variants={fadeUp(0.2)}
           initial="hidden"
@@ -48,7 +48,7 @@ export default function ProductsGridView({ products }) {
         >
           Products
         </motion.h1>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5">
           {products?.map((item) => {
             return <ProductCard product={item} key={item?.id} />;
           })}
