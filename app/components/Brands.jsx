@@ -46,14 +46,21 @@ export default function Brands({ brands }) {
   }
 
   return (
-    <div className="flex flex-col gap-8 justify-center overflow-hidden md:p-10 p-5">
+    <div
+      className="flex flex-col gap-8 justify-center overflow-hidden md:p-10 p-5 bg-cover bg-center"
+      /* style={{
+        backgroundImage: `linear-gradient(rgba(248, 248, 248, 0.9), rgba(248, 248, 248, 0.85)), url('/images/d.jpg')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }} */
+    >
       <Slider {...settings}>
         {(brands?.length <= 2
           ? [...brands, ...brands, ...brands]
           : brands
         )?.map((brand) => {
           return (
-            <div className="px-2">
+            <div className="px-2 ">
               <div className="flex flex-col gap-2 items-center justify-center">
                 <div className="h-28 rounded-lg md:p-5 p-2 overflow-hidden">
                   <img
