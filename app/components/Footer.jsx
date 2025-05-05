@@ -114,7 +114,7 @@ export default function Footer() {
             </motion.div>
           </div>
           <p className="text-center mt-8 border-t-2 border-black pt-8">
-            © 2025 . All Rights Reserved | AIRSTUDIOS
+            AIRSTUDIOS © 2025 | Rights Reserved
           </p>
         </div>
       </footer>

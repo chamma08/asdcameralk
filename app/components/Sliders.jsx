@@ -7,6 +7,8 @@ import React from "react";
 import Slider from "react-slick";
 import FavoriteButton from "./FavoriteButton";
 import AddToCartButton from "./AddToCartButton";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const fadeUp = (delay) => {
   return {
@@ -42,13 +44,23 @@ export default function FeaturedProductSlider({ featuredProducts }) {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
+    dotsClass: "slick-dots custom-dots", // Add custom class for styling
+    appendDots: (dots) => (
+      <div className="custom-dots-container">
+        <ul className="flex justify-center items-center"> {dots} </ul>
+      </div>
+    ),
+    customPaging: () => (
+      <div className="h-2 w-2 rounded-full bg-gray-300 hover:bg-blue-500 transition-colors"></div>
+    ),
   };
+  
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-hidden relative slider-container">
       <Slider {...settings}>
-        {featuredProducts?.map((product) => {
+        {featuredProducts?.map((product, index) => {
           return (
-            <div>
+            <div key={product?.id || index}>
               <div className="flex flex-col-reverse md:flex-row gap-4 bg-[#f8f8f8] p-5 md:px-24 md:py-20 w-full cursor-grab">
                 <div className="flex-1 flex flex-col md:gap-10 gap-4">
                   <h2 className="text-gray-500 text-xs md:text-base">
@@ -112,6 +124,28 @@ export default function FeaturedProductSlider({ featuredProducts }) {
           );
         })}
       </Slider>
+      
+      {/* Custom styles for the dots */}
+      <style jsx global>{`
+        .custom-dots {
+          position: absolute;
+          bottom: 15px;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          padding: 0;
+          margin: 0;
+          list-style: none;
+        }
+        
+        .custom-dots li {
+          margin: 0 5px;
+        }
+        
+        .custom-dots li.slick-active div {
+          background-color: #3b82f6; /* Blue color for active dot */
+        }
+      `}</style>
     </div>
   );
 }
