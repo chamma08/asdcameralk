@@ -33,7 +33,7 @@ export default function Footer() {
                 <p className="flex items-center gap-2 mt-2">
                   {" "}
                   <MdEmail />
-                  matheeshacham08@gmail.com
+                  asdcameralk@gmail.com
                 </p>
               </div>
             </motion.div>
@@ -109,16 +109,12 @@ export default function Footer() {
               </div>
               <div className="space-y-2">
                 <p>Payment Methods</p>
-                <img
-                  src="/c1.png"
-                  alt="payment"
-                  className="w-[80%]"
-                />
+                <img src="/c1.png" alt="payment" className="w-[80%]" />
               </div>
             </motion.div>
           </div>
           <p className="text-center mt-8 border-t-2 border-black pt-8">
-            © 2025 . All Rights Reserved | Matheesha Dissanayake
+            © 2025 . All Rights Reserved | AIRSTUDIOS
           </p>
         </div>
       </footer>

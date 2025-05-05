@@ -93,16 +93,16 @@ export function ProductCard({ product }) {
       {/* <p className="text-xs text-gray-500 line-clamp-1">
         {product?.shortDescription}
       </p> */}
-      <Suspense>
+      {/* <Suspense>
         <RatingReview product={product} />
-      </Suspense>
-      {product?.stock <= (product?.orders ?? 0) && (
+      </Suspense> */}
+      {/* {product?.stock <= (product?.orders ?? 0) && (
         <div className="flex">
           <h3 className="text-red-500 rounded-lg text-xs font-semibold">
             Out Of Stock
           </h3>
         </div>
-      )}
+      )} */}
       <div className="flex items-center gap-4 w-full">
         <div className="w-full">
           <Link href={`/checkout?type=buynow&productId=${product?.id}`}>

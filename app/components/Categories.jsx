@@ -82,7 +82,7 @@ export default function Categories({ categories }) {
           transition={{ delay: 0.5, duration: 1 }}
           className="text-lg font-semibold"
         >
-          Shop By Category
+          Rent By Category
         </motion.h1>
       </div>
       <Slider {...settings}>
