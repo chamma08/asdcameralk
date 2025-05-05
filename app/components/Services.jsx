@@ -47,7 +47,12 @@ const ServiceData = [
 export default function Services() {
   return (
     <>
-      <section className="bg-gray-100 py-4 mt-4">
+      <section className="bg-gray-100 py-4 mt-4 bg-cover bg-center"
+      style={{
+        backgroundImage: `linear-gradient(rgba(248, 248, 248, 0.9), rgba(248, 248, 248, 0.85)), url('/images/d.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}>
         <div className="container py-6">
           <motion.h1
             variants={fadeUp(0.2)}

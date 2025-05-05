@@ -51,7 +51,7 @@ export default function FeaturedProductSlider({ featuredProducts }) {
       </div>
     ),
     customPaging: () => (
-      <div className="h-2 w-2 rounded-full bg-gray-300 hover:bg-blue-500 transition-colors"></div>
+      <div className="h-2 w-2 rounded-full bg-gray-400 hover:bg-black transition-colors"></div>
     ),
   };
   
@@ -61,7 +61,14 @@ export default function FeaturedProductSlider({ featuredProducts }) {
         {featuredProducts?.map((product, index) => {
           return (
             <div key={product?.id || index}>
-              <div className="flex flex-col-reverse md:flex-row gap-4 bg-[#f8f8f8] p-5 md:px-24 md:py-20 w-full cursor-grab">
+              <div 
+                className="flex flex-col-reverse md:flex-row gap-4 p-5 md:px-24 md:py-20 w-full cursor-grab bg-cover bg-center"
+                style={{
+                  backgroundImage: `linear-gradient(rgba(248, 248, 248, 0.9), rgba(248, 248, 248, 0.85)), url('${product?.backgroundImageURL || '/images/c.jpg'}')`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              >
                 <div className="flex-1 flex flex-col md:gap-10 gap-4">
                   <h2 className="text-gray-500 text-xs md:text-base">
                     HOT ARRIVALS
@@ -143,7 +150,7 @@ export default function FeaturedProductSlider({ featuredProducts }) {
         }
         
         .custom-dots li.slick-active div {
-          background-color: #3b82f6; /* Blue color for active dot */
+          background-color: #000000; /* Blue color for active dot */
         }
       `}</style>
     </div>
