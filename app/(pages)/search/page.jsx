@@ -28,10 +28,10 @@ export default async function Page({ searchParams }) {
   return (
     <main className="flex flex-col gap-1 min-h-screen p-5">
       <SearchBox />
-      <div className="flex flex-col gap-1 justify-center items-center">
+      {/* <div className="flex flex-col gap-1 justify-center items-center">
         <h1 className="text-xs text-gray-500">Powered By</h1>
         <img src="/algolia.png" className="h-5" alt="Algolia Logo" />
-      </div>
+      </div> */}
       {products?.length != 0 && (
         <div className="w-full flex justify-center">
           <div className="flex flex-col gap-5 max-w-[900px] p-5">

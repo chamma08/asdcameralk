@@ -59,6 +59,23 @@ export default function ProductsGridView({ products }) {
 }
 
 export function ProductCard({ product }) {
+  // The function to open Facebook Messenger
+  const openMessenger = (e) => {
+    e.preventDefault();
+    
+    // Replace 'YOUR_PAGE_ID' with your actual Facebook Page ID
+    const pageId = "YOUR_PAGE_ID";
+    
+    // You can customize the initial message to include product details
+    const message = encodeURIComponent(`I'm interested in renting: ${product?.title}`);
+    
+    // Create the messenger URL
+    const messengerUrl = `https://m.me/${pageId}?ref=${product?.id}&initialMessage=${message}`;
+    
+    // Open the URL in a new tab
+    window.open(messengerUrl, '_blank');
+  };
+
   return (
     <div className="flex flex-col gap-3 border p-4 rounded-lg">
       <div className="relative w-full">
@@ -105,11 +122,13 @@ export function ProductCard({ product }) {
       )} */}
       <div className="flex items-center gap-4 w-full">
         <div className="w-full">
-          <Link href={`/checkout?type=buynow&productId=${product?.id}`}>
-            <button className="flex-1 bg-blue-500 text-white px-4 py-2 rounded-lg text-xs w-full">
-              Rent Now
-            </button>
-          </Link>
+          {/* Changed from Link to button with onClick handler */}
+          <button 
+            onClick={openMessenger} 
+            className="flex-1 bg-blue-500 text-white px-4 py-2 rounded-lg text-xs w-full"
+          >
+            Rent Now
+          </button>
         </div>
         <AuthContextProvider>
           <AddToCartButton productId={product?.id} />
