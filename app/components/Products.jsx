@@ -9,7 +9,7 @@ import { easeInOut, motion } from "framer-motion";
 import FavoriteButton from "./FavoriteButton";
 import AddToCartButton from "./AddToCartButton";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 const fadeUp = (delay) => {
   return {
@@ -62,37 +62,51 @@ export function ProductCard({ product }) {
   // The function to open Facebook Messenger
   const openMessenger = (e) => {
     e.preventDefault();
-    
+
     // Replace 'YOUR_PAGE_ID' with your actual Facebook Page ID
     const pageId = "YOUR_PAGE_ID";
-    
+
     // You can customize the initial message to include product details
-    const message = encodeURIComponent(`I'm interested in renting: ${product?.title}`);
-    
+    const message = encodeURIComponent(
+      `I'm interested in renting: ${product?.title}`
+    );
+
     // Create the messenger URL
     const messengerUrl = `https://m.me/${pageId}?ref=${product?.id}&initialMessage=${message}`;
-    
+
     // Open the URL in a new tab
-    window.open(messengerUrl, '_blank');
+    window.open(messengerUrl, "_blank");
   };
 
   return (
-    <div className="flex flex-col gap-3 border p-4 rounded-lg">
-      <div className="relative w-full">
-        <motion.img
-          variants={fadeUp(0.5)}
-          initial="hidden"
-          whileInView="show"
-          src={product?.featureImageURL}
-          className="rounded-lg h-48 w-full object-cover"
-          alt={product?.title}
-        />
-        <div className="absolute top-1 right-1">
-          <AuthContextProvider>
-            <FavoriteButton productId={product?.id} />
-          </AuthContextProvider>
-        </div>
+    <div className="flex flex-col gap-3 border p-4 rounded-lg relative">
+      {/* Favorite button positioned absolutely at the very top right */}
+      <div className="absolute top-1 right-1 z-10">
+        <AuthContextProvider>
+          <FavoriteButton productId={product?.id} />
+        </AuthContextProvider>
       </div>
+      <Link href={`/products/${product?.id}`}>
+        <div className="relative w-full overflow-hidden rounded-lg">
+          <motion.div
+            whileHover={{ 
+              scale: 1.1,
+              transition: { duration: 0.3, ease: easeInOut }
+            }}
+            className="h-48 w-full"
+          >
+            <motion.img
+              variants={fadeUp(0.5)}
+              initial="hidden"
+              whileInView="show"
+              src={product?.featureImageURL}
+              className="rounded-lg h-full w-full object-cover"
+              alt={product?.title}
+            />
+          </motion.div>
+        </div>
+      </Link>
+
       <Link href={`/products/${product?.id}`}>
         <h1 className="font-semibold line-clamp-2 text-sm">{product?.title}</h1>
       </Link>
@@ -123,9 +137,9 @@ export function ProductCard({ product }) {
       <div className="flex items-center gap-4 w-full">
         <div className="w-full">
           {/* Changed from Link to button with onClick handler */}
-          <button 
-            onClick={openMessenger} 
-            className="flex-1 bg-blue-500 text-white px-4 py-2 rounded-lg text-xs w-full"
+          <button
+            onClick={openMessenger}
+            className="flex-1 bg-black hover:bg-transparent hover:text-black border-black border-2 text-white px-4 py-2 rounded-lg text-xs font-medium w-full"
           >
             Rent Now
           </button>

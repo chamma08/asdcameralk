@@ -15,6 +15,7 @@ import Brands from "./components/Brands";
 import SideBar from "./components/SideBar";
 import Footer from "./components/Footer";
 import Services from "./components/Services";
+import Redbar from "./components/Redbar";
 
 export const dynamic = 'force-dynamic';
 
@@ -29,6 +30,7 @@ export default async function Home() {
     ]);
   return (
     <main className="w-screen h-screen overflow-x-hidden overflow-y-auto">
+      <Redbar />
       <Header />
       <SideBar />
       <FeaturedProductSlider featuredProducts={featuredProducts} />

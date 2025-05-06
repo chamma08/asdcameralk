@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
+
 const SideBar = () => {
   const [open, setOpen] = useState(true);
   const Menus = [
@@ -20,7 +22,7 @@ const SideBar = () => {
       onMouseLeave={() => setOpen(false)}
       className={` ${
         open ? "w-56 bg-white bg-opacity-50 backdrop-blur-xl" : "w-20"
-      } bg-transparent rounded-xl border-2 border-gray-400 mt-2 ml-1 h-50 p-5 z-30  pt-8 fixed duration-200 `}
+      } bg-transparent rounded-xl border-2 border-gray-400 mt-2 ml-1 h-50 p-5 z-30 pt-8 fixed duration-200 `}
     >
       <img
         src="/control.png"
@@ -29,9 +31,12 @@ const SideBar = () => {
         onClick={() => setOpen(!open)}
       />
       <div className="flex gap-x-4 items-center">
-        <img
+        <motion.img
           src="/logo.png"
-          className={`cursor-pointer duration-500 ${open && "rotate-[360deg]"}`}
+          initial={{ scale: 1 }}
+          animate={{ scale: open ? 1.1 : 1 }}
+          transition={{ duration: 0.3 }}
+          className="cursor-pointer"
         />
         {/* <h1
             className={`text-white origin-left font-medium text-xl duration-200 ${
@@ -45,9 +50,9 @@ const SideBar = () => {
         {Menus.map((Menu, index) => (
           <li
             key={index}
-            className={`flex rounded-md p-2 cursor-pointer hover:text-blue-500 text-black text-sm items-center gap-x-4 
+            className={`flex rounded-md p-2 cursor-pointer hover:text-red-700 text-black text-sm items-center gap-x-4 
               ${Menu.gap ? "mt-9" : "mt-2"} ${
-              index === 0 && "bg-blue-500 text-white"
+              index === 0 && "bg-red-500 text-white"
             } `}
           >
             <img src={`/${Menu.src}.png`} />
@@ -60,4 +65,5 @@ const SideBar = () => {
     </div>
   );
 };
+
 export default SideBar;

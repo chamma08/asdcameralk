@@ -104,7 +104,7 @@ export default function FeaturedProductSlider({ featuredProducts }) {
                       <Link
                         href={`/checkout?type=buynow&productId=${product?.id}`}
                       >
-                        <button className="bg-blue-500 hover:bg-blue-900 text-white text-xs md:text-sm px-4 py-1.5 rounded-lg">
+                        <button className="bg-black hover:bg-gray-800 text-white text-xs md:text-sm px-4 py-1.5 rounded-lg">
                           RENT NOW
                         </button>
                       </Link>
