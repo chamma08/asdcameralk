@@ -1,11 +1,9 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Phone, Clock, CheckCircle, XCircle } from "lucide-react";
+import { Phone, CheckCircle, XCircle } from "lucide-react";
 
 const Redbar = () => {
-  // Mock data - in a real app, this would come from your backend
   const phoneNumbers = [
     "011 2 687 687",
     "011 2 687 688",
@@ -15,19 +13,17 @@ const Redbar = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [displayedPhoneIndex, setDisplayedPhoneIndex] = useState(0);
   
-  // Check if store is open based on current time
   useEffect(() => {
     const checkIfOpen = () => {
       const now = new Date();
       const hours = now.getHours();
-      const day = now.getDay(); // 0 is Sunday, 6 is Saturday
-      
-      // Assuming open Mon-Fri 9AM-6PM, Sat 9AM-1PM, closed on Sunday
+      const day = now.getDay();
+
       if (day === 0) {
         setIsOpen(false);
-      } else if (day === 6) { // Saturday
+      } else if (day === 6) {
         setIsOpen(hours >= 9 && hours < 13);
-      } else { // Weekdays
+      } else {
         setIsOpen(hours >= 9 && hours < 18);
       }
     };
@@ -37,91 +33,66 @@ const Redbar = () => {
     return () => clearInterval(interval);
   }, []);
   
-  // Cycle through phone numbers every few seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setDisplayedPhoneIndex((prevIndex) => 
         prevIndex === phoneNumbers.length - 1 ? 0 : prevIndex + 1
       );
-    }, 5000); // Change number every 5 seconds
+    }, 5000);
     
     return () => clearInterval(interval);
   }, [phoneNumbers.length]);
-  
-  // Animation variants for the typing effect
-  const sentenceVariants = {
-    hidden: { opacity: 1 },
-    visible: {
-      opacity: 1,
-      transition: {
-        delay: 0.5,
-        staggerChildren: 0.05
-      }
-    }
-  };
-  
-  const letterVariants = {
-    hidden: { opacity: 0, y: 5 },
-    visible: {
-      opacity: 1,
-      y: 0
-    }
-  };
 
   return (
     <motion.nav
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="sticky top-0 z-50 bg-[#FF0000] backdrop-blur-2xl py-2 px-4 md:py-3 md:px-16 flex justify-between items-center text-white"
+      className="sticky top-0 z-50 bg-[#FF0000] backdrop-blur-2xl py-2 w-full relative text-white overflow-hidden"
     >
-      <div className="flex flex-1 justify-start">
-        {/* Phone number with icon and typing animation */}
-        <div className="flex items-center">
-          <Phone size={18} className="mr-2" />
-          <motion.div 
-            key={`phone-${displayedPhoneIndex}`}
-            className="flex"
-            variants={sentenceVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {phoneNumbers[displayedPhoneIndex].split('').map((char, index) => (
-              <motion.span
-                key={`char-${index}`}
-                variants={letterVariants}
-                className="font-medium"
-              >
-                {char}
-              </motion.span>
-            ))}
-          </motion.div>
-        </div>
+      {/* Centered phone number */}
+      <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 flex items-center">
+        <Phone size={18} className="mr-1" />
+        <motion.div 
+          key={`phone-${displayedPhoneIndex}`}
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+          className="font-medium"
+        >
+          {phoneNumbers[displayedPhoneIndex]}
+        </motion.div>
       </div>
       
-      {/* Updated Open/Closed status indicator with icons */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 0.5 }}
-        className={`text-sm font-medium px-3 py-1 rounded flex items-center ${
-          isOpen 
-            ? "bg-green-600 text-white" 
-            : "bg-gray-200 text-gray-800"
-        }`}
-      >
-        {isOpen ? (
-          <>
-            <CheckCircle size={16} className="mr-1" />
-            <span>WE ARE OPEN NOW</span>
-          </>
-        ) : (
-          <>
-            <XCircle size={16} className="mr-1" />
-            <span>WE ARE CLOSED NOW</span>
-          </>
-        )}
-      </motion.div>
+      {/* Scrolling text container */}
+      <div className="w-full h-8 overflow-hidden relative">
+        <motion.div
+          animate={{
+            x: ["-100%", "1000%"]
+          }}
+          transition={{
+            duration: 25,
+            ease: "linear",
+            repeat: Infinity
+          }}
+          className="absolute flex items-center whitespace-nowrap top-1 transform -translate-y-1/2 left-0"
+        >
+          {isOpen ? (
+            <>
+              <CheckCircle size={16} className="mr-1" />
+              <span className="font-medium">WE ARE OPEN NOW</span>
+            </>
+          ) : (
+            <>
+              <XCircle size={16} className="mr-1" />
+              <span className="font-medium">WE ARE CLOSED NOW</span>
+            </>
+          )}
+        </motion.div>
+
+        {/* Block space for centered phone number */}
+        <div className="absolute left-1/2 top-0 transform -translate-x-1/2 bg-[#FF0000] h-full w-48 z-10"></div>
+      </div>
     </motion.nav>
   );
 };

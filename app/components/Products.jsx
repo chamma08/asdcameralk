@@ -139,7 +139,7 @@ export function ProductCard({ product }) {
           {/* Changed from Link to button with onClick handler */}
           <button
             onClick={openMessenger}
-            className="flex-1 bg-black hover:bg-transparent hover:text-black border-black border-2 text-white px-4 py-2 rounded-lg text-xs font-medium w-full"
+            className="flex-1 bg-red-600 hover:bg-transparent hover:text-black border-red-500 border-2 text-white px-4 py-2 rounded-lg text-xs font-medium w-full"
           >
             Rent Now
           </button>
