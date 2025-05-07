@@ -13,6 +13,7 @@ import {
   ShoppingCart,
   Star,
   User,
+  Wrench,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -25,6 +26,11 @@ export default function Sidebar() {
       name: "Dashboard",
       link: "/admin",
       icon: <LayoutDashboard className="h-5 w-5" />,
+    },
+    {
+      name: "Configurations",
+      link: "/admin/configurations",
+      icon: <Wrench className="h-5 w-5" />,
     },
     {
       name: "Products",

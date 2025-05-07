@@ -2,11 +2,41 @@
 
 import { FaGoogle, FaPhone } from "react-icons/fa";
 import { FaFacebook, FaInstagram } from "react-icons/fa6";
-import { MdEmail } from "react-icons/md";
-import React from "react";
+import { MdEmail, MdLocationOn } from "react-icons/md";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useFooterSettings } from "../services/settings";
 
 export default function Footer() {
+  // Default phone numbers and email
+  const [phoneNumbers, setPhoneNumbers] = useState({
+    "JaEla": [
+      "(+94) 70 300 9000",
+      "(+94) 76 300 9000",
+      "(+94) 70 400 9005"
+    ],
+    "Kurunegala": [
+      "(+94) 70 400 9000",
+      "(+94) 76 400 9000"
+    ],
+    "Colombo": [
+      "(+94) 72 500 9000"
+    ]
+  });
+  
+  const [email, setEmail] = useState("asdcameralk@gmail.com");
+  
+  // Fetch settings from Firebase
+  const { data, error, isLoading } = useFooterSettings();
+  
+  // Update state when settings are loaded
+  useEffect(() => {
+    if (data) {
+      setPhoneNumbers(data.phoneNumbers || phoneNumbers);
+      setEmail(data.email || email);
+    }
+  }, [data]);
+
   return (
     <>
       <footer className="bg-blue-100 z-50 pt-12 pb-8">
@@ -26,14 +56,26 @@ export default function Footer() {
                 the best service for our customers.
               </p>
               <div className="space-y-4">
-                <p className="flex items-center gap-2">
-                  <FaPhone />
-                  070 000 0000/076 000 0000
-                </p>
+                {/* Contact Information - Dynamic from Firebase */}
+                <div className="space-y-3">
+                  {Object.entries(phoneNumbers).map(([location, numbers]) => (
+                    <div key={location} className="ml-1">
+                      <p className="flex items-center gap-2 font-semibold text-sm">
+                        <MdLocationOn className="text-red-500" />
+                        {location}
+                      </p>
+                      {numbers.map((number, index) => (
+                        <p key={index} className="flex items-center gap-2 text-sm ml-5 mt-1">
+                          <FaPhone className="text-xs" />
+                          {number}
+                        </p>
+                      ))}
+                    </div>
+                  ))}
+                </div>
                 <p className="flex items-center gap-2 mt-2">
-                  {" "}
                   <MdEmail />
-                  asdcameralk@gmail.com
+                  {email}
                 </p>
               </div>
             </motion.div>

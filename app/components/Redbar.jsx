@@ -2,17 +2,37 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Phone, CheckCircle, XCircle } from "lucide-react";
+import { useRedbarSettings } from "../services/settings";
 
 const Redbar = () => {
-  const phoneNumbers = [
+  const [phoneNumbers, setPhoneNumbers] = useState([
     "011 2 687 687",
     "011 2 687 688",
     "077 7 687 687"
-  ];
+  ]);
   
+  const [openText, setOpenText] = useState("WE ARE OPEN NOW");
+  const [closedText, setClosedText] = useState("WE ARE CLOSED NOW");
   const [isOpen, setIsOpen] = useState(true);
   const [displayedPhoneIndex, setDisplayedPhoneIndex] = useState(0);
   
+  // Use our settings hook to fetch data
+  const { data } = useRedbarSettings();
+  
+  // Update state when settings are loaded
+  useEffect(() => {
+    if (data) {
+      setOpenText(data.openText || "WE ARE OPEN NOW");
+      setClosedText(data.closedText || "WE ARE CLOSED NOW");
+      setPhoneNumbers(data.phoneNumbers || [
+        "011 2 687 687",
+        "011 2 687 688",
+        "077 7 687 687"
+      ]);
+    }
+  }, [data]);
+  
+  // Check if shop is open based on time
   useEffect(() => {
     const checkIfOpen = () => {
       const now = new Date();
@@ -33,7 +53,10 @@ const Redbar = () => {
     return () => clearInterval(interval);
   }, []);
   
+  // Rotate through phone numbers
   useEffect(() => {
+    if (phoneNumbers.length <= 1) return;
+    
     const interval = setInterval(() => {
       setDisplayedPhoneIndex((prevIndex) => 
         prevIndex === phoneNumbers.length - 1 ? 0 : prevIndex + 1
@@ -60,7 +83,7 @@ const Redbar = () => {
           transition={{ delay: 0.2, duration: 0.3 }}
           className="font-medium"
         >
-          {phoneNumbers[displayedPhoneIndex]}
+          {phoneNumbers[displayedPhoneIndex] || phoneNumbers[0]}
         </motion.div>
       </div>
       
@@ -80,12 +103,12 @@ const Redbar = () => {
           {isOpen ? (
             <>
               <CheckCircle size={16} className="mr-1" />
-              <span className="font-medium">WE ARE OPEN NOW</span>
+              <span className="font-medium">{openText}</span>
             </>
           ) : (
             <>
               <XCircle size={16} className="mr-1" />
-              <span className="font-medium">WE ARE CLOSED NOW</span>
+              <span className="font-medium">{closedText}</span>
             </>
           )}
         </motion.div>
