@@ -47,7 +47,7 @@ export default function AddToCartButton({ productId, type }) {
         isDisabled={isLoading}
         onClick={handlClick}
         variant="bordered"
-        className=""
+        className="border-red-500 text-red-500"
       >
         {!isAdded && "Add To Cart"}
         {isAdded && "Click To Remove"}
@@ -62,7 +62,7 @@ export default function AddToCartButton({ productId, type }) {
         isDisabled={isLoading}
         onClick={handlClick}
         variant="bordered"
-        className=""
+        className="border-red-500 text-red-500"
         color="primary"
         size="sm"
       >
