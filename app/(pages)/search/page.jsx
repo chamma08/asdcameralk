@@ -27,7 +27,7 @@ export default async function Page({ searchParams }) {
   const products = await getProducts(q);
   return (
     <main className="flex flex-col gap-1 min-h-screen p-5">
-      <SearchBox />
+      {/* <SearchBox /> */}
       {/* <div className="flex flex-col gap-1 justify-center items-center">
         <h1 className="text-xs text-gray-500">Powered By</h1>
         <img src="/algolia.png" className="h-5" alt="Algolia Logo" />
