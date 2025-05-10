@@ -4,6 +4,8 @@ import { ProductCard } from "@/app/components/Products";
 import { algoliasearch } from "algoliasearch";
 import SearchBox from "./components/SearchBox";
 import { motion } from "framer-motion";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 const fadeUp = (delay) => {
   return {
@@ -77,11 +79,15 @@ export default async function Page({ searchParams }) {
 
   return (
     <main className="flex flex-col gap-5 min-h-screen p-5">
-      {/* <SearchBox /> */}
-      {/* <div className="flex flex-col gap-1 justify-center items-center">
-        <h1 className="text-xs text-gray-500">Powered By</h1>
-        <img src="/algolia.png" className="h-5" alt="Algolia Logo" />
-      </div> */}
+      {/* Back Button */}
+      <div className="w-full flex justify-center">
+        <div className="flex flex-col gap-5 max-w-[900px] p-5 w-full">
+          <Link href="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors w-fit">
+            <ArrowLeft size={18} />
+            <span>Back</span>
+          </Link>
+        </div>
+      </div>
       
       {/* Search Results Section */}
       <div className="w-full flex justify-center">
