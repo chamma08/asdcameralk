@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, ShoppingCart, UserCircle2, Search } from "lucide-react";
+import { Heart, ShoppingCart, UserCircle2, Search, Menu, X } from "lucide-react";
 import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
@@ -13,6 +13,8 @@ import { algoliasearch } from "algoliasearch";
 
 export default function Header() {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const mobileMenuRef = useRef(null);
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -106,17 +108,35 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
   
-  // Handle escape key to close mobile search
+  // Handle escape key to close mobile search and menu
   useEffect(() => {
     const handleEscKey = (event) => {
-      if (event.key === 'Escape' && showMobileSearch) {
-        setShowMobileSearch(false);
+      if (event.key === 'Escape') {
+        if (showMobileSearch) setShowMobileSearch(false);
+        if (showMobileMenu) setShowMobileMenu(false);
       }
     };
     
     document.addEventListener('keydown', handleEscKey);
     return () => document.removeEventListener('keydown', handleEscKey);
-  }, [showMobileSearch]);
+  }, [showMobileSearch, showMobileMenu]);
+  
+  // Close mobile menu on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target)
+      ) {
+        setShowMobileMenu(false);
+      }
+    };
+
+    if (showMobileMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [showMobileMenu]);
 
   const handleSubmit = (e) => {
     e?.preventDefault();
@@ -143,6 +163,7 @@ export default function Header() {
         <img className="h-10 md:h-8" src="/logo.png" alt="Logo" />
       </Link>
 
+      {/* Desktop Navigation */}
       <div className="hidden md:flex gap-2 items-center font-semibold">
         {menuList.map((item, index) => (
           <Link href={item.link} key={index}>
@@ -152,6 +173,19 @@ export default function Header() {
           </Link>
         ))}
       </div>
+      
+      {/* Mobile Menu Button */}
+      <button 
+        className="md:hidden flex h-8 w-8 justify-center items-center rounded-full hover:bg-gray-50"
+        onClick={() => setShowMobileMenu(!showMobileMenu)}
+        aria-label="Menu"
+      >
+        {showMobileMenu ? (
+          <X size={16} />
+        ) : (
+          <Menu size={16} />
+        )}
+      </button>
 
       {/* Search & Suggestions with updated UI */}
       <div className="relative flex-grow mx-2 sm:mx-4 max-w-md hidden sm:block" ref={suggestionsRef}>
@@ -172,11 +206,11 @@ export default function Header() {
             }}
             placeholder="Search for products"
             type="text"
-            className="w-full pl-3 sm:pl-4 pr-10 sm:pr-12 py-1.5 sm:py-2 text-sm sm:text-base rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400"
+            className="w-full pl-3 sm:pl-4 pr-10 sm:pr-12 py-1.5 sm:py-2 text-sm sm:text-base rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-red-400"
           />
           <button
             type="submit"
-            className="absolute right-0 flex items-center justify-center bg-blue-600 text-white rounded-full"
+            className="absolute right-0 flex items-center justify-center bg-red-600 text-white rounded-full"
             style={{ width: '32px', height: '32px', right: '2px', top: '50%', transform: 'translateY(-50%)', '@media (min-width: 640px)': { width: '40px', height: '40px' } }}
           >
             <Search size={18} className="sm:hidden" />
@@ -192,7 +226,7 @@ export default function Header() {
 
             {isLoading ? (
               <div className="p-3 sm:p-4 text-center">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 border-gray-300 border-t-black rounded-full animate-spin mx-auto"></div>
+                <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 border-gray-300 border-t-red-600 rounded-full animate-spin mx-auto"></div>
               </div>
             ) : suggestions.length > 0 ? (
               suggestions.map((item, index) => (
@@ -265,6 +299,24 @@ export default function Header() {
         </AuthContextProvider>
       </div>
       
+      {/* Mobile Menu Dropdown */}
+      {showMobileMenu && (
+        <div 
+          ref={mobileMenuRef}
+          className="absolute left-0 right-0 top-full bg-white border-b shadow-lg z-50 md:hidden"
+        >
+          <div className="py-2 px-4">
+            {menuList.map((item, index) => (
+              <Link href={item.link} key={index} onClick={() => setShowMobileMenu(false)}>
+                <div className="py-3 border-b last:border-0 text-sm font-medium hover:bg-gray-50 px-2 rounded">
+                  {item.name}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+      
       {/* Full-width Mobile Search - Only shows when activated */}
       {showMobileSearch && (
         <div className="absolute left-0 right-0 top-full bg-white border-b py-3 px-4 sm:hidden z-50">
@@ -290,11 +342,11 @@ export default function Header() {
                 autoFocus
                 placeholder="Search for products"
                 type="text"
-                className="w-full pl-3 pr-10 py-2 text-sm rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-red-400"
+                className="w-full pl-3 pr-10 py-2 text-sm rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-red-400"
               />
               <button
                 type="submit"
-                className="absolute right-0 flex items-center justify-center bg-red-800 text-white rounded-full"
+                className="absolute right-0 flex items-center justify-center bg-red-600 text-white rounded-full"
                 style={{ width: '32px', height: '32px', right: '2px', top: '50%', transform: 'translateY(-50%)' }}
               >
                 <Search size={18} />
@@ -309,7 +361,7 @@ export default function Header() {
 
                 {isLoading ? (
                   <div className="p-3 text-center">
-                    <div className="w-5 h-5 border-2 border-gray-300 border-t-black rounded-full animate-spin mx-auto"></div>
+                    <div className="w-5 h-5 border-2 border-gray-300 border-t-red-600 rounded-full animate-spin mx-auto"></div>
                   </div>
                 ) : suggestions.length > 0 ? (
                   suggestions.map((item, index) => (
