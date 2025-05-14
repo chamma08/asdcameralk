@@ -34,3 +34,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+asdcamera-40742-firebase-adminsdk-rl0fc-93aa4d9de2.json
