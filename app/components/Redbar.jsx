@@ -91,7 +91,7 @@ const Redbar = () => {
       <div className="w-full h-8 overflow-hidden relative">
         <motion.div
           animate={{
-            x: ["-100%", "1000%"]
+            x: ["1000%", "-100%"]
           }}
           transition={{
             duration: 25,
