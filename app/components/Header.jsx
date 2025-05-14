@@ -235,10 +235,10 @@ export default function Header() {
       </div>
 
       {/* Desktop Navigation */}
-      <div className="hidden md:flex gap-1 lg:gap-2 items-center font-semibold">
+      <div className="hidden md:flex gap-1 lg:gap-2 items-center font-semibold bg-slate-200 rounded-full">
         {menuList.map((item, index) => (
           <Link href={item.link} key={index}>
-            <button className="text-xs lg:text-sm px-2 lg:px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+            <button className="text-xs lg:text-sm px-2 lg:px-4 py-2 rounded-lg hover:bg-gray-50 hover:rounded-full transition-colors">
               {item.name}
             </button>
           </Link>
