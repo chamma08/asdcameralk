@@ -24,7 +24,6 @@ export default function BasicDetails({ data, handleData }) {
             handleData("title", e.target.value);
           }}
           className="border px-4 py-2 rounded-lg w-full outline-none"
-          required
         />
       </div>
 
@@ -45,7 +44,6 @@ export default function BasicDetails({ data, handleData }) {
             handleData("shortDescription", e.target.value);
           }}
           className="border px-4 py-2 rounded-lg w-full outline-none"
-          required
         />
       </div>
 
@@ -62,7 +60,6 @@ export default function BasicDetails({ data, handleData }) {
             handleData("brandId", e.target.value);
           }}
           className="border px-4 py-2 rounded-lg w-full outline-none"
-          required
         >
           <option value="">Select Brand</option>
           {brands?.map((item) => {
@@ -88,7 +85,6 @@ export default function BasicDetails({ data, handleData }) {
             handleData("categoryId", e.target.value);
           }}
           className="border px-4 py-2 rounded-lg w-full outline-none"
-          required
         >
           <option value="">Select Category</option>
           {categories?.map((item) => {
@@ -115,7 +111,6 @@ export default function BasicDetails({ data, handleData }) {
             handleData("stock", e.target.valueAsNumber);
           }}
           className="border px-4 py-2 rounded-lg w-full outline-none"
-          required
         />
       </div>
 
@@ -133,7 +128,6 @@ export default function BasicDetails({ data, handleData }) {
             handleData("price", e.target.valueAsNumber);
           }}
           className="border px-4 py-2 rounded-lg w-full outline-none"
-          required
         />
       </div>
 
@@ -151,7 +145,6 @@ export default function BasicDetails({ data, handleData }) {
             handleData("salePrice", e.target.valueAsNumber);
           }}
           className="border px-4 py-2 rounded-lg w-full outline-none"
-          required
         />
       </div>
 
@@ -172,7 +165,6 @@ export default function BasicDetails({ data, handleData }) {
             handleData("isFeatured", e.target.value === "yes" ? true : false);
           }}
           className="border px-4 py-2 rounded-lg w-full outline-none"
-          required
         >
           <option value={"no"}>No</option>
           <option value={"yes"}>Yes</option>

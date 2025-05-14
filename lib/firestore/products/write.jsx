@@ -6,9 +6,9 @@ export const createNewProduct = async ({ data, featureImage, imageList }) => {
     if (!data?.title) {
       throw new Error("Title is required");
     }
-    if (!featureImage) {
+    /* if (!featureImage) {
       throw new Error("Feature Image is required");
-    }
+    } */
     const featureImageRef = ref(storage, `products/${featureImage?.name}`);
     await uploadBytes(featureImageRef, featureImage);
     const featureImageURL = await getDownloadURL(featureImageRef);
