@@ -10,6 +10,7 @@ import {
   Phone,
 } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import AuthContextProvider from "@/context/AuthContext";
@@ -31,6 +32,10 @@ export default function Header() {
   const router = useRouter();
   const suggestionsRef = useRef(null);
   const [viewportWidth, setViewportWidth] = useState(0);
+  const pathname = usePathname(); // Get current path
+  
+  // Tooltip state for buttons
+  const [activeTooltip, setActiveTooltip] = useState(null);
   
   // Phone number rotation
   const [phoneNumbers, setPhoneNumbers] = useState([
@@ -151,12 +156,13 @@ export default function Header() {
         if (showMobileSearch) setShowMobileSearch(false);
         if (showMobileMenu) setShowMobileMenu(false);
         if (showSuggestions) setShowSuggestions(false);
+        if (activeTooltip) setActiveTooltip(null);
       }
     };
 
     document.addEventListener("keydown", handleEscKey);
     return () => document.removeEventListener("keydown", handleEscKey);
-  }, [showMobileSearch, showMobileMenu, showSuggestions]);
+  }, [showMobileSearch, showMobileMenu, showSuggestions, activeTooltip]);
 
   // Close mobile menu on outside click
   useEffect(() => {
@@ -194,6 +200,14 @@ export default function Header() {
     setShowMobileSearch(false);
   };
 
+  // Function to check if a link is active
+  const isActiveLink = (link) => {
+    if (link === "/") {
+      return pathname === "/";
+    }
+    return pathname.startsWith(link);
+  };
+
   // Use our settings hook to fetch data
   const { data } = useRedbarSettings();
 
@@ -204,6 +218,15 @@ export default function Header() {
       );
     }
   }, [data]);
+
+  // Helper function for tooltips
+  const renderTooltip = (id, text) => {
+    return activeTooltip === id ? (
+      <div className="absolute -bottom-9 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded whitespace-nowrap z-50">
+        {text}
+      </div>
+    ) : null;
+  };
 
   return (
     <motion.nav
@@ -238,7 +261,13 @@ export default function Header() {
       <div className="hidden md:flex gap-1 lg:gap-2 items-center font-semibold bg-slate-200 rounded-full">
         {menuList.map((item, index) => (
           <Link href={item.link} key={index}>
-            <button className="text-xs lg:text-sm px-2 lg:px-4 py-2 rounded-lg hover:bg-gray-50 hover:rounded-full transition-colors">
+            <button 
+              className={`text-xs lg:text-sm px-2 lg:px-4 py-2 rounded-full transition-colors ${
+                isActiveLink(item.link) 
+                  ? "bg-gray-50 text-black rounded-full" 
+                  : "hover:bg-gray-50 hover:rounded-full"
+              }`}
+            >
               {item.name}
             </button>
           </Link>
@@ -357,24 +386,48 @@ export default function Header() {
         <Search size={16} />
       </button>
 
-      {/* User Account Buttons - Responsive sizing */}
+      {/* User Account Buttons - With tooltips on hover */}
       <div className="flex items-center gap-1 z-10 shrink-0">
         <AuthContextProvider>
           <AdminButton />
         </AuthContextProvider>
+        
+        {/* Favorites and Cart buttons with tooltips */}
         <AuthContextProvider>
-          <HeaderClientButtons />
+          <div className="relative">
+            <HeaderClientButtons 
+              onFavoritesHover={() => setActiveTooltip('favorites')} 
+              onFavoritesLeave={() => setActiveTooltip(null)}
+              onCartHover={() => setActiveTooltip('cart')} 
+              onCartLeave={() => setActiveTooltip(null)}
+            />
+          </div>
         </AuthContextProvider>
-        <Link href={`/login`}>
-          <button
-            title="My Account"
-            className="h-8 w-8 flex justify-center items-center rounded-full hover:bg-gray-50 transition-colors"
-          >
-            <UserCircle2 size={16} />
-          </button>
-        </Link>
+        
+        {/* My Account button with tooltip */}
+        <div className="relative">
+          <Link href={`/login`}>
+            <button
+              title="My Account"
+              className="h-8 w-8 flex justify-center items-center rounded-full hover:bg-gray-50 transition-colors"
+              onMouseEnter={() => setActiveTooltip('account')}
+              onMouseLeave={() => setActiveTooltip(null)}
+            >
+              <UserCircle2 size={16} />
+            </button>
+          </Link>
+          {renderTooltip('account', 'My Account')}
+        </div>
+        
+        {/* Logout button with tooltip */}
         <AuthContextProvider>
-          <LogoutButton />
+          <div className="relative">
+            <LogoutButton 
+              onHover={() => setActiveTooltip('logout')} 
+              onLeave={() => setActiveTooltip(null)}
+            />
+            {renderTooltip('logout', 'Logout')}
+          </div>
         </AuthContextProvider>
       </div>
 
@@ -409,7 +462,11 @@ export default function Header() {
                 key={index}
                 onClick={() => setShowMobileMenu(false)}
               >
-                <div className="py-2.5 border-b last:border-0 text-sm font-medium hover:bg-gray-50 px-3 rounded transition-colors">
+                <div className={`py-2.5 border-b last:border-0 text-sm font-medium px-3 rounded transition-colors ${
+                  isActiveLink(item.link) 
+                    ? "bg-red-100 text-red-700" 
+                    : "hover:bg-gray-50"
+                }`}>
                   {item.name}
                 </div>
               </Link>
