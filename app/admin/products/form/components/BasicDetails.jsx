@@ -24,6 +24,7 @@ export default function BasicDetails({ data, handleData }) {
             handleData("title", e.target.value);
           }}
           className="border px-4 py-2 rounded-lg w-full outline-none"
+          required
         />
       </div>
 
@@ -32,7 +33,7 @@ export default function BasicDetails({ data, handleData }) {
           className="text-gray-500 text-xs"
           htmlFor="product-short-decription"
         >
-          Short Description <span className="text-red-500">*</span>{" "}
+          Short Description
         </label>
         <input
           type="text"
@@ -99,7 +100,7 @@ export default function BasicDetails({ data, handleData }) {
 
       <div className="flex flex-col gap-1">
         <label className="text-gray-500 text-xs" htmlFor="product-stock">
-          Stock <span className="text-red-500">*</span>{" "}
+          Stock {/* <span className="text-red-500">*</span>{" "} */}
         </label>
         <input
           type="number"
@@ -128,12 +129,13 @@ export default function BasicDetails({ data, handleData }) {
             handleData("price", e.target.valueAsNumber);
           }}
           className="border px-4 py-2 rounded-lg w-full outline-none"
+          required
         />
       </div>
 
       <div className="flex flex-col gap-1">
         <label className="text-gray-500 text-xs" htmlFor="product-sale-price">
-          Sale Price <span className="text-red-500">*</span>{" "}
+          Sale Price
         </label>
         <input
           type="number"
@@ -165,6 +167,7 @@ export default function BasicDetails({ data, handleData }) {
             handleData("isFeatured", e.target.value === "yes" ? true : false);
           }}
           className="border px-4 py-2 rounded-lg w-full outline-none"
+          required
         >
           <option value={"no"}>No</option>
           <option value={"yes"}>Yes</option>
