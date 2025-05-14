@@ -14,7 +14,7 @@ const Redbar = () => {
   const [openText, setOpenText] = useState("WE ARE OPEN NOW");
   const [closedText, setClosedText] = useState("WE ARE CLOSED NOW");
   const [isOpen, setIsOpen] = useState(true);
-  const [displayedPhoneIndex, setDisplayedPhoneIndex] = useState(0);
+  
   
   // Use our settings hook to fetch data
   const { data } = useRedbarSettings();
@@ -73,25 +73,13 @@ const Redbar = () => {
       transition={{ duration: 0.8 }}
       className="sticky top-0 z-50 bg-[#FF0000] backdrop-blur-2xl py-2 w-full relative text-white overflow-hidden"
     >
-      {/* Centered phone number */}
-      <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 flex items-center">
-        <Phone size={18} className="mr-1" />
-        <motion.div 
-          key={`phone-${displayedPhoneIndex}`}
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
-          className="font-medium"
-        >
-          {phoneNumbers[displayedPhoneIndex] || phoneNumbers[0]}
-        </motion.div>
-      </div>
+      
       
       {/* Scrolling text container */}
       <div className="w-full h-8 overflow-hidden relative">
         <motion.div
           animate={{
-            x: ["1000%", "-100%"]
+            x: ["1000%", "-90%"]
           }}
           transition={{
             duration: 25,
@@ -114,7 +102,7 @@ const Redbar = () => {
         </motion.div>
 
         {/* Block space for centered phone number */}
-        <div className="absolute left-1/2 top-0 transform -translate-x-1/2 bg-[#FF0000] h-full w-48 z-10"></div>
+        {/* <div className="absolute left-1/2 top-0 transform -translate-x-1/2 bg-[#FF0000] h-full w-48 z-10"></div> */}
       </div>
     </motion.nav>
   );
