@@ -13,6 +13,7 @@ export default function LogoutButton() {
     }
     return (
       <button
+        title="Logout"
         onClick={async () => {
           if (!confirm("Are you sure?")) return;
           try {

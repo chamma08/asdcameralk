@@ -34,9 +34,6 @@ export default function Header() {
   const [viewportWidth, setViewportWidth] = useState(0);
   const pathname = usePathname(); // Get current path
   
-  // Tooltip state for buttons
-  const [activeTooltip, setActiveTooltip] = useState(null);
-  
   // Phone number rotation
   const [phoneNumbers, setPhoneNumbers] = useState([
     "011 2 687 687",
@@ -156,13 +153,12 @@ export default function Header() {
         if (showMobileSearch) setShowMobileSearch(false);
         if (showMobileMenu) setShowMobileMenu(false);
         if (showSuggestions) setShowSuggestions(false);
-        if (activeTooltip) setActiveTooltip(null);
       }
     };
 
     document.addEventListener("keydown", handleEscKey);
     return () => document.removeEventListener("keydown", handleEscKey);
-  }, [showMobileSearch, showMobileMenu, showSuggestions, activeTooltip]);
+  }, [showMobileSearch, showMobileMenu, showSuggestions]);
 
   // Close mobile menu on outside click
   useEffect(() => {
@@ -218,15 +214,6 @@ export default function Header() {
       );
     }
   }, [data]);
-
-  // Helper function for tooltips
-  const renderTooltip = (id, text) => {
-    return activeTooltip === id ? (
-      <div className="absolute -bottom-9 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded whitespace-nowrap z-50">
-        {text}
-      </div>
-    ) : null;
-  };
 
   return (
     <motion.nav
@@ -386,48 +373,24 @@ export default function Header() {
         <Search size={16} />
       </button>
 
-      {/* User Account Buttons - With tooltips on hover */}
+      {/* User Account Buttons - Responsive sizing */}
       <div className="flex items-center gap-1 z-10 shrink-0">
         <AuthContextProvider>
           <AdminButton />
         </AuthContextProvider>
-        
-        {/* Favorites and Cart buttons with tooltips */}
         <AuthContextProvider>
-          <div className="relative">
-            <HeaderClientButtons 
-              onFavoritesHover={() => setActiveTooltip('favorites')} 
-              onFavoritesLeave={() => setActiveTooltip(null)}
-              onCartHover={() => setActiveTooltip('cart')} 
-              onCartLeave={() => setActiveTooltip(null)}
-            />
-          </div>
+          <HeaderClientButtons />
         </AuthContextProvider>
-        
-        {/* My Account button with tooltip */}
-        <div className="relative">
-          <Link href={`/login`}>
-            <button
-              title="My Account"
-              className="h-8 w-8 flex justify-center items-center rounded-full hover:bg-gray-50 transition-colors"
-              onMouseEnter={() => setActiveTooltip('account')}
-              onMouseLeave={() => setActiveTooltip(null)}
-            >
-              <UserCircle2 size={16} />
-            </button>
-          </Link>
-          {renderTooltip('account', 'My Account')}
-        </div>
-        
-        {/* Logout button with tooltip */}
+        <Link href={`/login`}>
+          <button
+            title="My Account"
+            className="h-8 w-8 flex justify-center items-center rounded-full hover:bg-gray-50 transition-colors"
+          >
+            <UserCircle2 size={16} />
+          </button>
+        </Link>
         <AuthContextProvider>
-          <div className="relative">
-            <LogoutButton 
-              onHover={() => setActiveTooltip('logout')} 
-              onLeave={() => setActiveTooltip(null)}
-            />
-            {renderTooltip('logout', 'Logout')}
-          </div>
+          <LogoutButton />
         </AuthContextProvider>
       </div>
 

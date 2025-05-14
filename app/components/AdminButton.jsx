@@ -10,7 +10,7 @@ export default function AdminButton() {
   }
   return (
     <Link href={"/admin"}>
-      <button className="text-small font-semibold">Admin</button>
+      <button title="Admin Panel" className="text-small font-semibold">Admin</button>
     </Link>
   );
 }
