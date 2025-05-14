@@ -245,14 +245,14 @@ export default function Header() {
       </div>
 
       {/* Desktop Navigation */}
-      <div className="hidden md:flex gap-1 lg:gap-2 items-center font-semibold bg-slate-200 rounded-full">
+      <div className="hidden md:flex gap-1 lg:gap-2 items-center font-semibold bg-gray-50 rounded-full">
         {menuList.map((item, index) => (
           <Link href={item.link} key={index}>
             <button 
               className={`text-xs lg:text-sm px-2 lg:px-4 py-2 rounded-full transition-colors ${
                 isActiveLink(item.link) 
-                  ? "bg-gray-50 text-black rounded-full" 
-                  : "hover:bg-gray-50 hover:rounded-full"
+                  ? "bg-slate-200 text-black rounded-full" 
+                  : "hover:bg-slate-200 hover:rounded-full"
               }`}
             >
               {item.name}
