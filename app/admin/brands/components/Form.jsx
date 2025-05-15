@@ -1,6 +1,5 @@
 "use client";
 
-
 import { getBrand } from "@/lib/firestore/brands/read_server";
 import { createNewBrand, updateBrand } from "@/lib/firestore/brands/write";
 import { Button } from "@nextui-org/react";

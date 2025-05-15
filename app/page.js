@@ -16,6 +16,7 @@ import SideBar from "./components/SideBar";
 import Footer from "./components/Footer";
 import Services from "./components/Services";
 import Redbar from "./components/Redbar";
+import ImageSlider from "./components/ImageSlider";
 
 export const dynamic = 'force-dynamic';
 
@@ -33,6 +34,7 @@ export default async function Home() {
       <Redbar />
       <Header />
       <SideBar />
+      <ImageSlider />
       <FeaturedProductSlider featuredProducts={featuredProducts} />
       {/* <Collections collections={collections} /> */}
       <Categories categories={categories} />

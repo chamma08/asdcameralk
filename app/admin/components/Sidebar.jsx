@@ -4,6 +4,7 @@ import { auth } from "@/lib/firestore/firebase";
 import { signOut } from "firebase/auth";
 import {
   Cat,
+  GalleryHorizontalEnd,
   Layers2,
   LayoutDashboard,
   LibraryBig,
@@ -26,6 +27,11 @@ export default function Sidebar() {
       name: "Dashboard",
       link: "/admin",
       icon: <LayoutDashboard className="h-5 w-5" />,
+    },
+    {
+      name: "Images Slider",
+      link: "/admin/images",
+      icon: <GalleryHorizontalEnd className="h-5 w-5" />,
     },
     {
       name: "Configurations",

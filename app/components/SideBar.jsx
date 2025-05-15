@@ -31,13 +31,13 @@ const SideBar = () => {
         onClick={() => setOpen(!open)}
       />
       <div className="flex gap-x-4 items-center">
-        <motion.img
+        {/* <motion.img
           src="/logo.png"
           initial={{ scale: 1 }}
           animate={{ scale: open ? 1.1 : 1 }}
           transition={{ duration: 0.3 }}
           className="cursor-pointer"
-        />
+        /> */}
         {/* <h1
             className={`text-white origin-left font-medium text-xl duration-200 ${
               !open && "scale-0"
