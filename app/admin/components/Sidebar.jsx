@@ -4,6 +4,7 @@ import { auth } from "@/lib/firestore/firebase";
 import { signOut } from "firebase/auth";
 import {
   Cat,
+  GalleryHorizontal,
   GalleryHorizontalEnd,
   Layers2,
   LayoutDashboard,
@@ -52,6 +53,11 @@ export default function Sidebar() {
       name: "Brands",
       link: "/admin/brands",
       icon: <Cat className="h-5 w-5" />,
+    },
+    {
+      name: "Banners",
+      link: "/admin/banners",
+      icon: <GalleryHorizontal className="h-5 w-5" />,
     },
     {
       name: "Orders",

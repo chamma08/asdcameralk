@@ -17,6 +17,7 @@ import Footer from "./components/Footer";
 import Services from "./components/Services";
 import Redbar from "./components/Redbar";
 import ImageSlider from "./components/ImageSlider";
+import Banners from "./components/Banners";
 
 export const dynamic = 'force-dynamic';
 
@@ -40,6 +41,7 @@ export default async function Home() {
       <Categories categories={categories} />
       <Services />
       <ProductsGridView products={products} />
+      <Banners />
       {/* <CustomerReviews /> */}
       <Brands brands={brands} />
       <Footer />

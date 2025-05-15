@@ -5,11 +5,10 @@ import { Edit2, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
-
-import { useImages } from "@/lib/images/read";
+import { useBanners } from "@/lib/firestore/banners/read";
 
 export default function ListView() {
-  const { data: images, error, isLoading } = useImages();
+  const { data: images, error, isLoading } = useBanners();
 
   if (isLoading) {
     return (
