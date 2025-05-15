@@ -2,20 +2,25 @@
 
 import React, { useState, useEffect } from 'react';
 import { useImages } from '@/lib/images/read';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 100, scale: 0.5 },
+const fadeIn = {
+  hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    y: 0,
-    scale: 1,
     transition: {
-      duration: 0.5,
+      duration: 1.2,
       ease: "easeInOut",
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: 0.8,
+      ease: "easeOut",
     },
   }
 };
@@ -51,16 +56,18 @@ const ImageSlider = () => {
     );
   }
 
-  // Settings for the slider
+  // Settings for the slider with beforeChange and afterChange for animation control
   const settings = {
     dots: true,
     infinite: true,
-    speed: 500,
+    speed: 800,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: isAutoplay,
     autoplaySpeed: 4000,
     pauseOnHover: true,
+    fade: true, // Enable fade transition between slides
+    cssEase: "linear",
     dotsClass: "slick-dots custom-dots",
     appendDots: (dots) => (
       <div className="custom-dots-container">
@@ -88,39 +95,27 @@ const ImageSlider = () => {
         {images.map((image, index) => (
           <div key={image.id || index} className="cursor-grab">
             <div className="flex justify-center items-center bg-gray-50">
-              <motion.img
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="show"
-                src={image.imageURL}
-                alt={image.name || `Image ${index + 1}`}
-                className="h-[30rem] w-full bg-cover object-cover bg-center mx-auto"
-              />
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={image.id || index}
+                  variants={fadeIn}
+                  initial="hidden"
+                  animate="show"
+                  exit="exit"
+                  className="w-full h-full"
+                >
+                  <img
+                    src={image.imageURL}
+                    alt={image.name || `Image ${index + 1}`}
+                    className="h-[30rem] w-full bg-cover object-cover bg-center mx-auto"
+                  />
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
         ))}
       </Slider>
       
-      {/* Thumbnail navigation (only shows on desktop) */}
-      {/* <div className="hidden md:flex mt-4 space-x-2 overflow-x-auto pb-2 justify-center">
-        {images.map((image, index) => (
-          <div
-            key={`thumb-${image.id || index}`}
-            className="relative transition-all cursor-pointer opacity-70 hover:opacity-100"
-            onClick={() => {
-              // You'd need to add a ref to the Slider component and call slickGoTo
-              // This is a placeholder for that functionality
-            }}
-          >
-            <img 
-              src={image.imageURL} 
-              alt={`Thumbnail ${index + 1}`}
-              className="h-16 w-24 object-cover rounded-md"
-            />
-          </div>
-        ))}
-      </div> */}
-
       {/* Custom styles for the dots */}
       <style jsx global>{`
         .custom-dots {
@@ -140,6 +135,16 @@ const ImageSlider = () => {
         
         .custom-dots li.slick-active div {
           background-color: #000000;
+        }
+        
+        /* Additional styles for smooth transitions */
+        .slick-slide {
+          opacity: 0;
+          transition: opacity 0.8s ease-in-out;
+        }
+        
+        .slick-current {
+          opacity: 1;
         }
       `}</style>
     </div>

@@ -30,15 +30,18 @@ export default async function Page({ params }) {
         />
         <Details product={product} />
       </section>
-      <div className="flex justify-center py-10">
+      {/* <div className="flex justify-center py-10">
         <AuthContextProvider>
           <div className="flex flex-col md:flex-row gap-4 md:max-w-[900px] w-full">
             <AddReview productId={productId} />
             <Reviews productId={productId} />
           </div>
         </AuthContextProvider>
+      </div> */}
+      <div className="mt-10">
+        <hr className="border-t-2 border-gray-300" />
+        <RelatedProducts categoryId={product?.categoryId} />
       </div>
-      <RelatedProducts categoryId={product?.categoryId} />
     </main>
   );
 }
