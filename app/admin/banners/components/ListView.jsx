@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useBanners } from "@/lib/firestore/banners/read";
+import { deleteBanner } from "@/lib/firestore/banners/write";
 
 export default function ListView() {
   const { data: images, error, isLoading } = useBanners();
@@ -57,7 +58,7 @@ function Row({ item, index }) {
 
     setIsDeleting(true);
     try {
-      await deleteImage(item?.id);
+      await deleteBanner({ id: item?.id });
       toast.success("Image deleted successfully");
     } catch (error) {
       toast.error("Error deleting image");
@@ -67,7 +68,7 @@ function Row({ item, index }) {
   };
 
   const handleUpdate = () => {
-    router.push(`/admin/banners/${item?.id}`);
+    router.push(`/admin/banners?id=${item?.id}`);
   };
   return (
     <tr>

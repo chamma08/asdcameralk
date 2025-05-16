@@ -8,11 +8,10 @@ export default function Brands({ brands }) {
     infinite: true,
     speed: 500,
     slidesToShow: 5,
-    slidesToScroll: 5,
+    slidesToScroll: 1,
     initialSlide: 0,
     autoplay: true,
     autoplaySpeed: 2000,
-    slidesToScroll: 1,
     responsive: [
       {
         breakpoint: 1024,
@@ -58,15 +57,15 @@ export default function Brands({ brands }) {
         {(brands?.length <= 2
           ? [...brands, ...brands, ...brands]
           : brands
-        )?.map((brand) => {
+        )?.map((brand, index) => {
           return (
-            <div className="px-2 ">
+            <div className="px-2" key={`brand-${index}`}>
               <div className="flex flex-col gap-2 items-center justify-center">
                 <div className="h-28 rounded-lg md:p-5 p-2 overflow-hidden">
                   <img
                     className="h-full w-full object-cover"
                     src={brand?.imageURL}
-                    alt=""
+                    alt={brand?.name || "Brand logo"}
                   />
                 </div>
               </div>

@@ -7,6 +7,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { useImages } from "@/lib/images/read";
+import { deleteImage } from "@/lib/images/write";
 
 export default function ListView() {
   const { data: images, error, isLoading } = useImages();
@@ -58,7 +59,7 @@ function Row({ item, index }) {
 
     setIsDeleting(true);
     try {
-      await deleteImage(item?.id);
+      await deleteImage({ id: item?.id });
       toast.success("Image deleted successfully");
     } catch (error) {
       toast.error("Error deleting image");
@@ -68,7 +69,7 @@ function Row({ item, index }) {
   };
 
   const handleUpdate = () => {
-    router.push(`/admin/banners/${item?.id}`);
+    router.push(`/admin/images?id=${item?.id}`);
   };
   return (
     <tr>
