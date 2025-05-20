@@ -18,30 +18,34 @@ import Services from "./components/Services";
 import Redbar from "./components/Redbar";
 import ImageSlider from "./components/ImageSlider";
 import Banners from "./components/Banners";
+import { getImages } from "@/lib/firestore/images/read_server";
+import { getBanners } from "@/lib/firestore/banners/read_server";
 
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  const [featuredProducts, collections, categories, products, brands] =
+  const [featuredProducts, collections, categories, products, brands, images, banners] =
     await Promise.all([
       getFeaturedProducts(),
       getCollections(),
       getCategories(),
       getProducts(),
       getBrands(),
+      getImages(),
+      getBanners(),
     ]);
   return (
     <main className="w-screen h-screen overflow-x-hidden overflow-y-auto">
       <Redbar />
       <Header />
       <SideBar />
-      {/* <ImageSlider /> */}
+      {/* <ImageSlider images={images}/> */}
       <FeaturedProductSlider featuredProducts={featuredProducts} />
       {/* <Collections collections={collections} /> */}
       <Categories categories={categories} />
       <Services />
       <ProductsGridView products={products} />
-      <Banners />
+      <Banners banners={banners}/>
       {/* <CustomerReviews /> */}
       <Brands brands={brands} />
       <Footer />

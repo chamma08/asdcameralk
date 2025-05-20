@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useImages } from '@/lib/images/read';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useImages } from '@/lib/firestore/images/read';
 
 const fadeIn = {
   hidden: { opacity: 0 },
@@ -25,7 +26,9 @@ const fadeIn = {
   }
 };
 
-const ImageSlider = () => {
+export const dynamic = 'force-dynamic';
+
+export default function ImageSlider() {
   const { data: images, isLoading, error } = useImages();
   const [isAutoplay, setIsAutoplay] = useState(true);
 
@@ -151,4 +154,3 @@ const ImageSlider = () => {
   );
 };
 
-export default ImageSlider;

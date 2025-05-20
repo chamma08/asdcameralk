@@ -15,6 +15,7 @@ import {
   ShoppingCart,
   Star,
   User,
+  UserCog,
   Wrench,
 } from "lucide-react";
 import Link from "next/link";
@@ -48,6 +49,11 @@ export default function Sidebar() {
       name: "Categories",
       link: "/admin/categories",
       icon: <Layers2 className="h-5 w-5" />,
+    },
+    {
+      name: "Client Logos",
+      link: "/admin/client-logos",
+      icon: <UserCog className="h-5 w-5" />,
     },
     {
       name: "Brands",
@@ -110,7 +116,7 @@ export default function Sidebar() {
               toast.error(error?.message);
             }
           }}
-          className="flex gap-2 items-center px-3 py-2 hover:bg-indigo-100 rounded-xl w-full justify-center ease-soft-spring duration-400 transition-all"
+          className="flex gap-2 items-center px-3 py-2 hover:bg-red-800 hover:text-white rounded-xl w-full justify-center ease-soft-spring duration-400 transition-all"
         >
           <LogOut className="h-5 w-5" /> Logout
         </button>
@@ -125,8 +131,8 @@ function Tab({ item }) {
   return (
     <Link href={item?.link}>
       <li
-        className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold ease-soft-spring transition-all duration-300
-          ${isSelected ? "bg-[#879fff] text-white" : "bg-white text-black"} 
+        className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold ease-soft-spring transition-all duration-300 hover:bg-[#f53333] cursor-pointer hover:text-white
+          ${isSelected ? "bg-[#f53333] text-white" : "bg-white text-black"} 
           `}
       >
         {item?.icon} {item?.name}

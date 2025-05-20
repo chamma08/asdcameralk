@@ -2,8 +2,7 @@
 
 import { collection, onSnapshot } from "firebase/firestore";
 import useSWRSubscription from "swr/subscription";
-import { db } from "../firestore/firebase";
-
+import { db } from "../firebase";
 
 export function useImages() {
   const { data, error } = useSWRSubscription(["images"], ([path], { next }) => {

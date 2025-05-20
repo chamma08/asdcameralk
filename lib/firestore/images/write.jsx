@@ -1,6 +1,7 @@
 import { collection, deleteDoc, doc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { db, storage } from "../firestore/firebase";
+import { db, storage } from "../firebase";
+
 
 export const createNewImage = async ({ data, image }) => {
   if (!image) {

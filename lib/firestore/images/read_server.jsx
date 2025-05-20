@@ -1,5 +1,5 @@
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
-import { db } from "../firestore/firebase";
+import { db } from "../firebase";
 
 export const getImages = async () => {
   const list = await getDocs(collection(db, "images"));

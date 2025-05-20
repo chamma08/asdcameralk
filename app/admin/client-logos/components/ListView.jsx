@@ -1,17 +1,15 @@
-"use client";
+"use client"
 
-import { useImages } from "@/lib/firestore/images/read";
-import { deleteImage } from "@/lib/firestore/images/write";
+import { useLogos } from "@/lib/firestore/client-logos/read";
+import { deleteLogo } from "@/lib/firestore/client-logos/write";
 import { Button, CircularProgress } from "@nextui-org/react";
 import { Edit2, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-
-
-export default function ListView() {
-  const { data: images, error, isLoading } = useImages();
+export default function ListView(){
+  const { data: logos, error, isLoading } = useLogos();
 
   if (isLoading) {
     return (
@@ -23,9 +21,10 @@ export default function ListView() {
   if (error) {
     return <div>{error}</div>;
   }
+
   return (
     <div className="flex-1 flex flex-col gap-3 md:pr-5 md:px-0 px-5 rounded-xl">
-      <h1 className="text-xl">Images</h1>
+      <h1 className="text-xl">Logos</h1>
       <table className="border-separate border-spacing-y-3">
         <thead>
           <tr>
@@ -42,7 +41,7 @@ export default function ListView() {
           </tr>
         </thead>
         <tbody>
-          {images?.map((item, index) => {
+          {logos?.map((item, index) => {
             return <Row index={index} item={item} key={item?.id} />;
           })}
         </tbody>
@@ -60,18 +59,18 @@ function Row({ item, index }) {
 
     setIsDeleting(true);
     try {
-      await deleteImage({ id: item?.id });
-      toast.success("Image deleted successfully");
+      await deleteLogo({ id: item?.id });
+      toast.success("Successfully Deleted");
     } catch (error) {
-      toast.error("Error deleting image");
-    } finally {
-      setIsDeleting(false);
+      toast.error(error?.message);
     }
+    setIsDeleting(false);
   };
 
   const handleUpdate = () => {
-    router.push(`/admin/images?id=${item?.id}`);
+    router.push(`/admin/client-logos?id=${item?.id}`);
   };
+
   return (
     <tr>
       <td className="border-y bg-white px-3 py-2 border-l rounded-l-lg text-center">

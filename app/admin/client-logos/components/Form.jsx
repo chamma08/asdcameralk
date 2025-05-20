@@ -1,81 +1,78 @@
-"use client";
+"use client"
 
-
-import { getImage } from "@/lib/firestore/images/read_server";
-import { createNewImage, updateImage } from "@/lib/firestore/images/write";
+import { getLogo } from "@/lib/firestore/client-logos/read_server";
+import { createNewLogo, updateLogo } from "@/lib/firestore/client-logos/write";
 import { Button } from "@nextui-org/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function Form() {
-  const [data, setData] = useState(null);
-  const [image, setImage] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+    const [data, setData] = useState(null);
+    const [image, setImage] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    
+    const router = useRouter();
+    
+    const searchParams = useSearchParams();
+    const id = searchParams.get("id");
+    
+    const fetchData = async () => {
+        try {
+        const res = await getLogo({ id: id });
+        if (!res) {
+            toast.error("Logo Not Found!");
+        } else {
+            setData(res);
+        }
+        } catch (error) {
+        toast.error(error?.message);
+        }
+    };
 
-  const router = useRouter();
+    useEffect(() => {
+        if (id) {
+        fetchData();
+        }
+    }, [id]);
 
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
-
-  const fetchData = async () => {
-    try {
-      const res = await getImage({ id: id });
-      if (!res) {
-        toast.error("Image Not Found!");
-      } else {
-        setData(res);
-      }
-    } catch (error) {
-      toast.error(error?.message);
+    const handleData = (key, value) => {
+        setData((preData) => {
+            return {
+                ...(preData ?? {}),
+                [key]: value,
+            };
+        });
     }
-  };
 
-  useEffect(() => {
-    if (id) {
-      fetchData();
+    const handleCreate = async () => {
+        setIsLoading(true);
+        try {
+        await createNewLogo({ data: data, image: image });
+        toast.success("Successfully Created");
+        setData(null);
+        setImage(null);
+        } catch (error) {
+        toast.error(error?.message);
+        }
+        setIsLoading(false);
+    };
+
+    const handleUpdate = async () => {
+        setIsLoading(true);
+        try {
+        await updateLogo({ data: data, image: image });
+        toast.success("Successfully Updated");
+        router.push("/admin/client-logos");
+        } catch (error) {
+        toast.error(error?.message);
+        }
+        setIsLoading(false);
     }
-  }, [id]);
 
-  const handleData = (key, value) => {
-    setData((preData) => {
-      return {
-        ...(preData ?? {}),
-        [key]: value,
-      };
-    });
-  };
-
-  const handleCreate = async () => {
-    setIsLoading(true);
-    try {
-      await createNewImage({ data: data, image: image });
-      toast.success("Successfully Created");
-      setData(null);
-      setImage(null);
-    } catch (error) {
-      toast.error(error?.message);
-    }
-    setIsLoading(false);
-  };
-
-  const handleUpdate = async () => {
-    setIsLoading(true);
-    try {
-      await updateImage({ data: data, image: image });
-      toast.success("Successfully Updated");
-      setData(null);
-      setImage(null);
-      router.push(`/admin/images`);
-    } catch (error) {
-      toast.error(error?.message);
-    }
-    setIsLoading(false);
-  };
-
-  return (
+ return (
     <div className="flex flex-col gap-3 bg-white rounded-xl p-5 w-full md:w-[400px]">
-      <h1 className="font-semibold">{id ? "Update" : "Create"} Image</h1>
+      <h1 className="font-semibold">{id ? "Update" : "Create"} Client Logos</h1>
       <form
         onSubmit={(e) => {
           e.preventDefault();
