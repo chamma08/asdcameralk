@@ -47,7 +47,7 @@ function LinkCard({ link }) {
     >
       <div className="flex items-center gap-2">
         <div className="flex-shrink-0">
-          <div className="w-6 h-6 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full">
+          <div className="w-6 h-6 flex items-center justify-center bg-gray-100 text-black rounded-full">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 015.656 0l4 4a4 4 0 01-5.656 5.656l-1.102-1.101" />
