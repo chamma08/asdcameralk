@@ -1,5 +1,6 @@
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import NavBar from "../components/NavBar";
 import Redbar from "../components/Redbar";
 
 export default function Layout({ children }) {
@@ -7,6 +8,7 @@ export default function Layout({ children }) {
     <main>
       <Redbar />
       <Header />
+      <NavBar />
       {children}
       <Footer />
     </main>

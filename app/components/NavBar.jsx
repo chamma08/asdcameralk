@@ -179,7 +179,7 @@ export default function NavBar() {
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       transition={{ delay: 0.2, duration: 0.8 }}
-      className="sticky top-0 z-50 bg-white bg-opacity-65 backdrop-blur-2xl py-2 sm:py-3 px-3 sm:px-4 md:py-4 md:px-6 lg:px-16 border-b flex items-center justify-center gap-2 md:gap-4 lg:gap-6 transition-all duration-300"
+      className="sticky top-0 z-50 bg-white bg-opacity-65 backdrop-blur-2xl py-2 sm:py-3 px-3 sm:px-4 sm:justify-center  md:py-4 md:px-6 lg:px-16 border-b flex items-center justify-between gap-2 md:gap-4 lg:gap-6 transition-all duration-300"
     >
       {/* Logo and Phone Number Section */}
       
