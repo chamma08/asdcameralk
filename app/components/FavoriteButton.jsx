@@ -1,6 +1,5 @@
 "use client";
 
-
 import { useUser } from "@/lib/firestore/user/read";
 import { updateFavorites } from "@/lib/firestore/user/write";
 import { Button } from "@nextui-org/react";
@@ -27,11 +26,13 @@ export default function FavoriteButton({ productId }) {
       if (data?.favorites?.includes(productId)) {
         const newList = data?.favorites?.filter((item) => item != productId);
         await updateFavorites({ list: newList, uid: user?.uid });
+        toast.success("Removed from favorites");
       } else {
         await updateFavorites({
           list: [...(data?.favorites ?? []), productId],
           uid: user?.uid,
         });
+        toast.success("Added to favorites");
       }
     } catch (error) {
       toast.error(error?.message);

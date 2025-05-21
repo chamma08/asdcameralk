@@ -28,11 +28,13 @@ export default function AddToCartButton({ productId, type }) {
       if (isAdded) {
         const newList = data?.carts?.filter((item) => item?.id != productId);
         await updateCarts({ list: newList, uid: user?.uid });
+        toast.success("Removed from cart");
       } else {
         await updateCarts({
           list: [...(data?.carts ?? []), { id: productId, quantity: 1 }],
           uid: user?.uid,
         });
+        toast.success("Added to cart");
       }
     } catch (error) {
       toast.error(error?.message);
