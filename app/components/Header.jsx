@@ -109,7 +109,7 @@ export default function Header() {
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       transition={{ delay: 0.2, duration: 0.5 }}
-      className={`sticky top-0 z-50 bg-white bg-opacity-90 backdrop-blur-md sm:py-1 px-3 sm:px-4 md:py-1 md:px-6 lg:px-16 border-b-2 transition-all duration-300 ${
+      className={`sticky top-0 z-50 bg-white bg-opacity-90 backdrop-blur-md sm:py-1 px-3 sm:px-4 md:py-1 md:px-6 lg:px-16 border-b-1 transition-all duration-300 ${
         isScrolled ? "transform -translate-y-full" : "transform translate-y-0"
       }`}
     >
