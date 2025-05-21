@@ -73,7 +73,7 @@ export default function Images({
           </div>
         )}
         <label className="text-gray-500 text-xs" htmlFor="product-images">
-          Images <span className="text-red-500">*</span>{" "}
+          Images {/* <span className="text-red-500">*</span>{" "} */}
         </label>
         <input
           type="file"
