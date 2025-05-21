@@ -22,6 +22,7 @@ import { getImages } from "@/lib/firestore/images/read_server";
 import { getBanners } from "@/lib/firestore/banners/read_server";
 import { getLogos } from "@/lib/firestore/client-logos/read_server";
 import ClientLogoSlider from "./components/ClientLogoSlider";
+import NavBar from "./components/NavBar";
 
 export const dynamic = 'force-dynamic';
 
@@ -41,6 +42,7 @@ export default async function Home() {
     <main className="w-screen h-screen overflow-x-hidden overflow-y-auto">
       <Redbar />
       <Header />
+      <NavBar />
       <SideBar />
       {/* <ImageSlider images={images}/> */}
       <FeaturedProductSlider featuredProducts={featuredProducts} />
