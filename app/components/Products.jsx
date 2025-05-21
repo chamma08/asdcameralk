@@ -3,7 +3,7 @@
 import AuthContextProvider from "@/context/AuthContext";
 import { getProductReviewCounts } from "@/lib/firestore/products/count/read";
 import Link from "next/link";
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import MyRating from "./MyRating";
 import { easeInOut, motion } from "framer-motion";
 import FavoriteButton from "./FavoriteButton";
@@ -37,28 +37,39 @@ const fadeUp = (delay) => {
 };
 
 export default function ProductsGridView({ products }) {
+  const [hoveredProduct, setHoveredProduct] = useState(null);
+
   return (
-    <section className="w-full flex justify-center">
-      <div className="flex flex-col gap-5 max-w-[1200px] p-5">
-        <motion.h1
+    <section className="w-full flex justify-center bg-gray-50">
+      <div className="flex flex-col gap-5 max-w-[1200px] p-5 w-full">
+        <motion.div 
           variants={fadeUp(0.2)}
           initial="hidden"
           whileInView="show"
-          className="text-center font-semibold text-lg"
+          className="text-center mb-4"
         >
-          Products
-        </motion.h1>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5">
-          {products?.map((item) => {
-            return <ProductCard product={item} key={item?.id} />;
-          })}
+          <h1 className="font-bold text-2xl md:text-3xl text-gray-800">Products</h1>
+          <p className="text-gray-500 text-sm mt-2">Quality equipment available for rent</p>
+        </motion.div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+          {products?.map((item, index) => (
+            <ProductCard 
+              product={item} 
+              key={item?.id} 
+              delay={index * 0.1}
+              isHovered={hoveredProduct === item.id}
+              onHover={() => setHoveredProduct(item.id)}
+              onLeave={() => setHoveredProduct(null)}
+            />
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-export function ProductCard({ product }) {
+export function ProductCard({ product, delay = 0.5, isHovered, onHover, onLeave }) {
   // The function to open Facebook Messenger
   const openMessenger = (e) => {
     e.preventDefault();
@@ -78,15 +89,37 @@ export function ProductCard({ product }) {
     window.open(messengerUrl, "_blank");
   };
 
+  const discountPercentage = product?.price && product?.salePrice && product?.price !== product?.salePrice
+    ? Math.round(((product.price - product.salePrice) / product.price) * 100)
+    : null;
+
   return (
-    <div className="flex flex-col gap-3 border p-4 rounded-lg relative">
-      {/* Favorite button positioned absolutely at the very top right */}
-      <div className="absolute top-1 right-1 z-10">
+    <motion.div 
+      variants={fadeUp(delay)}
+      initial="hidden"
+      whileInView="show"
+      exit="exit"
+      whileHover={{ y: -5 }}
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
+      className="flex flex-col border border-gray-200 p-4 rounded-lg relative h-[380px] bg-white shadow-sm hover:shadow-md transition-shadow duration-300"
+    >
+      {/* Discount badge */}
+      {discountPercentage && (
+        <div className="absolute top-2 left-2 z-10 bg-red-500 text-white text-xs font-medium px-2 py-1 rounded-full">
+          {discountPercentage}% OFF
+        </div>
+      )}
+      
+      {/* Favorite button */}
+      <div className="absolute top-2 right-2 z-10">
         <AuthContextProvider>
           <FavoriteButton productId={product?.id} />
         </AuthContextProvider>
       </div>
-      <Link href={`/products/${product?.id}`}>
+
+      {/* Product image */}
+      <Link href={`/products/${product?.id}`} className="flex-shrink-0 block overflow-hidden rounded-lg">
         <div className="relative w-full overflow-hidden rounded-lg">
           <motion.div
             whileHover={{ 
@@ -96,70 +129,75 @@ export function ProductCard({ product }) {
             className="h-48 w-full"
           >
             <motion.img
-              variants={fadeUp(0.5)}
+              variants={fadeUp(delay + 0.2)}
               initial="hidden"
               whileInView="show"
               src={product?.featureImageURL}
               className="rounded-lg h-full w-full object-cover"
               alt={product?.title}
+              loading="lazy"
             />
           </motion.div>
         </div>
       </Link>
 
-      <Link href={`/products/${product?.id}`}>
-        <h1 className="font-semibold line-clamp-2 text-sm">{product?.title}</h1>
-      </Link>
-      <div className="">
-        <h2 className="text-green-500 text-sm font-semibold">
-          LKR {product?.salePrice}
-          {product?.salePrice !== product?.price && (
-            <span className="line-through text-xs text-gray-600 ml-2">
-              LKR {product?.price}
-            </span>
-          )}
-        </h2>
+      {/* Product info */}
+      <div className="flex flex-col flex-grow pt-3">
+        <Link href={`/products/${product?.id}`}>
+          <h1 className="font-semibold line-clamp-2 text-sm md:text-base h-12 text-gray-800 hover:text-red-600 transition-colors duration-200">
+            {product?.title}
+          </h1>
+        </Link>
+        
+        {/* <div className="mt-2 flex items-center">
+          <Suspense fallback={<div className="h-5"></div>}>
+            <RatingReview product={product} />
+          </Suspense>
+        </div> */}
+        
+        <div className="mt-2">
+          <div className="flex items-center gap-2">
+            <h2 className="text-red-600 font-bold text-base md:text-lg">
+              LKR {product?.salePrice?.toLocaleString()}
+            </h2>
+            {product?.salePrice !== product?.price && (
+              <span className="line-through text-xs text-gray-500">
+                LKR {product?.price?.toLocaleString()}
+              </span>
+            )}
+          </div>
+          {/* {product?.stock <= (product?.orders ?? 0) ? (
+            <p className="text-xs text-red-500 font-medium mt-1">Out of Stock</p>
+          ) : (
+            <p className="text-xs text-green-600 font-medium mt-1">Available Now</p>
+          )} */}
+        </div>
       </div>
 
-      {/* <p className="text-xs text-gray-500 line-clamp-1">
-        {product?.shortDescription}
-      </p> */}
-      {/* <Suspense>
-        <RatingReview product={product} />
-      </Suspense> */}
-      {/* {product?.stock <= (product?.orders ?? 0) && (
-        <div className="flex">
-          <h3 className="text-red-500 rounded-lg text-xs font-semibold">
-            Out Of Stock
-          </h3>
-        </div>
-      )} */}
-      <div className="flex items-center gap-4 w-full">
-        <div className="w-full">
-          {/* Changed from Link to button with onClick handler */}
-          <button
-            onClick={openMessenger}
-            className="flex-1 bg-red-600 hover:bg-transparent hover:text-black border-red-500 border-2 text-white px-4 py-2 rounded-lg text-xs font-medium w-full"
-          >
-            Rent Now
-          </button>
-        </div>
+      {/* Action buttons */}
+      <div className="flex items-center gap-3 w-full pt-3">
+        <button
+          onClick={openMessenger}
+          className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium w-full transition-colors duration-200"
+        >
+          Rent Now
+        </button>
         <AuthContextProvider>
           <AddToCartButton productId={product?.id} />
         </AuthContextProvider>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 async function RatingReview({ product }) {
   const counts = await getProductReviewCounts({ productId: product?.id });
   return (
-    <div className="flex gap-3 items-center">
-      <MyRating value={counts?.averageRating ?? 0} />
-      <h1 className="text-xs text-gray-400">
-        <span>{counts?.averageRating?.toFixed(1)}</span> ({counts?.totalReviews}
-        )
+    <div className="flex gap-2 items-center">
+      <MyRating value={counts?.averageRating ?? 0} size="small" />
+      <h1 className="text-xs text-gray-500">
+        <span>{counts?.averageRating?.toFixed(1) || "0.0"}</span> 
+        <span className="ml-1">({counts?.totalReviews || 0})</span>
       </h1>
     </div>
   );
