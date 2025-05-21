@@ -109,7 +109,7 @@ export default function ClientLogoSlider() {
   return (
     <div className="w-full bg-white py-8 md:py-12 overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-lg font-semibold text-center mb-8">Our Trusted Clients</h2>
+        <h2 className="text-xl font-semibold text-center mb-8">Our Clients</h2>
         
         <div className="relative">
           <Slider {...settings} className="client-logo-slider">
