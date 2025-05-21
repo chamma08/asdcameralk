@@ -115,12 +115,12 @@ export default function ClientLogoSlider() {
           <Slider {...settings} className="client-logo-slider">
             {displayLogos.map((logo, index) => (
               <div key={`${logo.id}-${index}`} className="px-4 focus:outline-none">
-                <div className="h-20 flex items-center justify-center">
-                  <div className="rounded-lg overflow-hidden bg-white border border-gray-200 p-1 shadow-sm h-16 w-16 flex items-center justify-center">
+                <div className="h-28 flex items-center justify-center">
+                  <div className="rounded-lg overflow-hidden bg-white border border-gray-200 p-2 shadow-sm h-24 w-24 flex items-center justify-center">
                     <img
                       src={logo.imageURL}
                       alt={logo.name || "Client logo"}
-                      className="h-auto w-auto max-h-14 max-w-full mx-auto object-contain object-center transition-opacity hover:opacity-80"
+                      className="h-auto w-auto max-h-20 max-w-full mx-auto object-contain object-center transition-opacity hover:opacity-80"
                       loading="lazy"
                       onError={(e) => {
                         e.target.src = "/placeholder-logo.png"; // Fallback image
