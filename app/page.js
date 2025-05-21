@@ -44,7 +44,7 @@ export default async function Home() {
       <Header />
       <NavBar />
       <SideBar />
-      <ImageSlider images={images}/>
+      {/* <ImageSlider images={images}/> */}
       <FeaturedProductSlider featuredProducts={featuredProducts} />
       {/* <Collections collections={collections} /> */}
       <Categories categories={categories} />
