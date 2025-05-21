@@ -5,11 +5,15 @@ import { CircularProgress } from "@nextui-org/react";
 import Link from "next/link";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import Redbar from "../components/Redbar";
+import NavBar from "../components/NavBar";
 
 export default function Layout({ children }) {
     return (
       <main>
+        <Redbar />
         <Header />
+        <NavBar />
         <AuthContextProvider>
           <UserChecking>
             <section className="min-h-screen">{children}</section>

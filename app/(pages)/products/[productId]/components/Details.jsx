@@ -45,7 +45,7 @@ export default function Details({ product }) {
       <div className="flex flex-wrap items-center gap-4">
         {product?.id && (
           <Link href={`/checkout?type=buynow&productId=${product.id}`}>
-            <button className="bg-red-600 hover:bg-transparent hover:text-black border-2 border-red-600 text-white rounded-xl px-4 py-1.5">
+            <button className="bg-red-600 hover:bg-transparent hover:text-black font-semibold border-2 border-red-600 text-white rounded-xl px-4 py-1.5">
               Rent Now
             </button>
           </Link>
