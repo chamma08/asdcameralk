@@ -65,26 +65,26 @@ export default function Sidebar() {
       link: "/admin/banners",
       icon: <GalleryHorizontal className="h-5 w-5" />,
     },
-    {
+    /* {
       name: "Orders",
       link: "/admin/orders",
       icon: <ShoppingCart className="h-5 w-5" />,
-    },
+    }, */
     {
       name: "Customers",
       link: "/admin/customers",
       icon: <User className="h-5 w-5" />,
     },
-    {
+    /* {
       name: "Reviews",
       link: "/admin/reviews",
       icon: <Star className="h-5 w-5" />,
-    },
-    {
+    }, */
+    /* {
       name: "Collections",
       link: "/admin/collections",
       icon: <LibraryBig className="h-5 w-5" />,
-    },
+    }, */
     {
       name: "Admins",
       link: "/admin/admins",
