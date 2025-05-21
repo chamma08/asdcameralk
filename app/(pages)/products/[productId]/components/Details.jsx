@@ -32,16 +32,23 @@ export default function Details({ product }) {
           {product.shortDescription}
         </h2>
       )}
+      
+      {/* Modified pricing logic */}
       {(product?.salePrice || product?.price) && (
         <h3 className="text-green-500 font-bold text-lg">
-          {product?.salePrice && `LKR ${product.salePrice} `}
-          {product?.price && (
-            <span className="line-through text-gray-700 text-sm">
-              LKR {product.price}
-            </span>
+          {product?.salePrice && product?.price && product.salePrice !== product.price ? (
+            <>
+              LKR {product.salePrice}{" "}
+              <span className="line-through text-gray-700 text-sm">
+                LKR {product.price}
+              </span>
+            </>
+          ) : (
+            <>LKR {product?.salePrice || product?.price}</>
           )}
         </h3>
       )}
+      
       <div className="flex flex-wrap items-center gap-4">
         {product?.id && (
           <Link href={`/checkout?type=buynow&productId=${product.id}`}>
