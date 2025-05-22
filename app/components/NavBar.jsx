@@ -26,6 +26,7 @@ export default function NavBar() {
     { name: "Home", link: "/" },
     { name: "About", link: "/about" },
     { name: "Contact", link: "/contact-us" },
+    { name: "Clients", link: "/clients" },
   ];
 
   // Track viewport width for responsive behavior

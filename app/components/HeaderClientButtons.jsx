@@ -136,7 +136,7 @@ export default function HeaderClientButtons() {
     const favoritesCount = (data?.favorites?.length ?? 0);
 
     return (
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 py-2 md:py-0">
         <Link href={`/favorites`}>
           <Tooltip content="My Favorites" placement="bottom">
             {favoritesCount > 0 ? (
@@ -177,7 +177,7 @@ export default function HeaderClientButtons() {
             }
             placement="bottom"
           >
-            <div className="relative">
+            <div className="relative my-1 md:my-0">
               {cartCount > 0 ? (
                 <motion.div
                   className="relative"
@@ -187,7 +187,7 @@ export default function HeaderClientButtons() {
                 >
                   <motion.button
                     aria-label="My Cart"
-                    className="relative bg-red-500 hover:bg-red-600 text-white rounded-full p-2 flex items-center gap-2 min-w-max transition-colors duration-200"
+                    className="relative bg-red-500 hover:bg-red-600 text-white rounded-full p-2 sm:p-2.5 flex items-center gap-2 min-w-max transition-colors duration-200 my-1 md:my-0"
                   >
                     <ShoppingCart size={16} className="flex-shrink-0" />
                     
@@ -214,7 +214,7 @@ export default function HeaderClientButtons() {
                             initial={{ opacity: 0, width: 0 }}
                             animate={{ opacity: 1, width: "auto" }}
                             exit={{ opacity: 0, width: 0 }}
-                            className="whitespace-nowrap"
+                            className="whitespace-nowrap text-xs sm:text-xs"
                           >
                             Rs.{formatCurrency(cartTotal.toFixed(0))}
                           </motion.span>
