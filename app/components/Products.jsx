@@ -56,7 +56,7 @@ export default function ProductsGridView({ products }) {
           {products?.map((item, index) => (
             <ProductCard 
               product={item} 
-              key={item?.id} 
+              key={`product-${item?.id}-${index}`} // Better key for re-rendering
               delay={index * 0.1}
               isHovered={hoveredProduct === item.id}
               onHover={() => setHoveredProduct(item.id)}
@@ -92,6 +92,12 @@ export function ProductCard({ product, delay = 0.5, isHovered, onHover, onLeave 
   const discountPercentage = product?.price && product?.salePrice && product?.price !== product?.salePrice
     ? Math.round(((product.price - product.salePrice) / product.price) * 100)
     : null;
+
+  // Ensure product has valid ID
+  if (!product?.id) {
+    console.warn("Product missing ID:", product);
+    return null;
+  }
 
   return (
     <motion.div 
@@ -134,7 +140,7 @@ export function ProductCard({ product, delay = 0.5, isHovered, onHover, onLeave 
               whileInView="show"
               src={product?.featureImageURL}
               className="rounded-lg h-full w-full object-cover"
-              alt={product?.title}
+              alt={product?.title || "Product"}
               loading="lazy"
             />
           </motion.div>
@@ -145,7 +151,7 @@ export function ProductCard({ product, delay = 0.5, isHovered, onHover, onLeave 
       <div className="flex flex-col flex-grow pt-3">
         <Link href={`/products/${product?.id}`}>
           <h1 className="font-semibold line-clamp-2 text-sm md:text-base h-12 text-gray-800 hover:text-red-600 transition-colors duration-200">
-            {product?.title}
+            {product?.title || "Untitled Product"}
           </h1>
         </Link>
         
@@ -158,9 +164,9 @@ export function ProductCard({ product, delay = 0.5, isHovered, onHover, onLeave 
         <div className="mt-2">
           <div className="flex items-center gap-2">
             <h2 className="text-red-600 font-bold text-base md:text-lg">
-              LKR {product?.salePrice?.toLocaleString()}
+              LKR {product?.salePrice?.toLocaleString() || product?.price?.toLocaleString() || "0"}
             </h2>
-            {product?.salePrice !== product?.price && (
+            {product?.salePrice !== product?.price && product?.price && (
               <span className="line-through text-xs text-gray-500">
                 LKR {product?.price?.toLocaleString()}
               </span>

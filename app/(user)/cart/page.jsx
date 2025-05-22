@@ -7,22 +7,61 @@ import { updateCarts } from "@/lib/firestore/user/write";
 import { Button, CircularProgress } from "@nextui-org/react";
 import { Minus, Plus, X } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+// Local storage helper functions
+const getLocalCart = () => {
+  if (typeof window !== 'undefined') {
+    const cart = localStorage.getItem('cart');
+    return cart ? JSON.parse(cart) : [];
+  }
+  return [];
+};
+
+const setLocalCart = (cart) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }
+};
 
 export default function Page() {
   const { user } = useAuth();
-  const { data, isLoading } = useUser({ uid: user?.uid });
-  if (isLoading) {
+  const { data: userData, isLoading } = useUser({ uid: user?.uid });
+  const [localCart, setLocalCartState] = useState([]);
+  const [isLoadingLocal, setIsLoadingLocal] = useState(true);
+
+  // Load local cart on mount
+  useEffect(() => {
+    if (!user) {
+      const cart = getLocalCart();
+      setLocalCartState(cart);
+    }
+    setIsLoadingLocal(false);
+  }, [user]);
+
+  // Get cart data based on user authentication status
+  const cartData = user ? userData?.carts : localCart;
+  const isCartLoading = user ? isLoading : isLoadingLocal;
+
+  if (isCartLoading) {
     return (
       <div className="p-10 flex w-full justify-center">
         <CircularProgress />
       </div>
     );
   }
+
   return (
     <main className="flex flex-col gap-3 justify-center items-center p-5">
       <h1 className="text-2xl font-semibold">Cart</h1>
-      {(!data?.carts || data?.carts?.length === 0) && (
+      {(!user && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 text-center">
+          <p className="text-blue-800 text-sm">
+            <Link href="/login" className="underline font-semibold">Login</Link> to sync your cart across devices
+          </p>
+        </div>
+      ))}
+      {(!cartData || cartData?.length === 0) && (
         <div className="flex flex-col gap-5 justify-center items-center h-full w-full py-20">
           <div className="flex justify-center">
             <img className="h-[200px]" src="/svgs/Empty.gif" alt="" />
@@ -33,8 +72,15 @@ export default function Page() {
         </div>
       )}
       <div className="p-5 w-full md:max-w-[900px] gap-4 grid grid-cols-1 md:grid-cols-2">
-        {data?.carts?.map((item, key) => {
-          return <ProductItem item={item} key={item?.id} />;
+        {cartData?.map((item, key) => {
+          return (
+            <ProductItem 
+              item={item} 
+              key={item?.id} 
+              isLoggedIn={!!user}
+              onLocalCartUpdate={setLocalCartState}
+            />
+          );
         })}
       </div>
       <div>
@@ -48,9 +94,9 @@ export default function Page() {
   );
 }
 
-function ProductItem({ item }) {
+function ProductItem({ item, isLoggedIn, onLocalCartUpdate }) {
   const { user } = useAuth();
-  const { data } = useUser({ uid: user?.uid });
+  const { data: userData } = useUser({ uid: user?.uid });
 
   const [isRemoving, setIsRemoving] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -60,32 +106,67 @@ function ProductItem({ item }) {
   const handleRemove = async () => {
     if (!confirm("Are you sure?")) return;
     setIsRemoving(true);
+    
     try {
-      const newList = data?.carts?.filter((d) => d?.id != item?.id);
-      await updateCarts({ list: newList, uid: user?.uid });
+      if (isLoggedIn) {
+        // Handle logged-in user cart
+        const newList = userData?.carts?.filter((d) => d?.id != item?.id);
+        await updateCarts({ list: newList, uid: user?.uid });
+      } else {
+        // Handle local cart
+        const currentCart = getLocalCart();
+        const newCart = currentCart.filter((d) => d?.id !== item?.id);
+        setLocalCart(newCart);
+        onLocalCartUpdate(newCart);
+      }
     } catch (error) {
-      toast.error(error?.message);
+      console.error("Error removing item:", error);
+      // Note: toast is not imported, you may want to add toast notification here
     }
+    
     setIsRemoving(false);
   };
 
   const handleUpdate = async (quantity) => {
+    if (quantity <= 0) return;
+    
     setIsUpdating(true);
+    
     try {
-      const newList = data?.carts?.map((d) => {
-        if (d?.id === item?.id) {
-          return {
-            ...d,
-            quantity: parseInt(quantity),
-          };
-        } else {
-          return d;
-        }
-      });
-      await updateCarts({ list: newList, uid: user?.uid });
+      if (isLoggedIn) {
+        // Handle logged-in user cart
+        const newList = userData?.carts?.map((d) => {
+          if (d?.id === item?.id) {
+            return {
+              ...d,
+              quantity: parseInt(quantity),
+            };
+          } else {
+            return d;
+          }
+        });
+        await updateCarts({ list: newList, uid: user?.uid });
+      } else {
+        // Handle local cart
+        const currentCart = getLocalCart();
+        const newCart = currentCart.map((d) => {
+          if (d?.id === item?.id) {
+            return {
+              ...d,
+              quantity: parseInt(quantity),
+            };
+          } else {
+            return d;
+          }
+        });
+        setLocalCart(newCart);
+        onLocalCartUpdate(newCart);
+      }
     } catch (error) {
-      toast.error(error?.message);
+      console.error("Error updating quantity:", error);
+      // Note: toast is not imported, you may want to add toast notification here
     }
+    
     setIsUpdating(false);
   };
 
@@ -100,12 +181,18 @@ function ProductItem({ item }) {
       </div>
       <div className="flex flex-col gap-1 w-full">
         <h1 className="text-sm font-semibold">{product?.title}</h1>
-        <h1 className="text-green-500 text-sm">
-          LKR {product?.salePrice}{" "}
-          <span className="line-through text-xs text-gray-500">
-            LKR {product?.price}
-          </span>
-        </h1>
+        <div className="text-green-500 text-sm">
+          {product?.salePrice === product?.price ? (
+            <span>LKR {product?.salePrice}</span>
+          ) : (
+            <>
+              LKR {product?.salePrice}{" "}
+              <span className="line-through text-xs text-gray-500">
+                LKR {product?.price}
+              </span>
+            </>
+          )}
+        </div>
         <div className="flex text-xs items-center gap-2">
           <Button
             onClick={() => {
