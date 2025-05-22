@@ -41,29 +41,40 @@ export default function ClientLogoSlider() {
     slidesToShow: slidesToShow,
     slidesToScroll: 1,
     autoplay: true,
-    speed: 1000,
+    speed: 3000,
     autoplaySpeed: 0,
     cssEase: "linear",
-    pauseOnHover: true,
+    pauseOnHover: false,
+    pauseOnFocus: false,
+    pauseOnDotsHover: false,
     arrows: false,
     rtl: false,
+    draggable: false,
+    swipe: false,
+    touchMove: false,
     responsive: [
       {
         breakpoint: 1024,
         settings: {
           slidesToShow: 4,
+          draggable: false,
+          swipe: false,
         }
       },
       {
         breakpoint: 768,
         settings: {
           slidesToShow: 3,
+          draggable: false,
+          swipe: false,
         }
       },
       {
         breakpoint: 480,
         settings: {
           slidesToShow: 2,
+          draggable: false,
+          swipe: false,
         }
       }
     ]
@@ -136,9 +147,14 @@ export default function ClientLogoSlider() {
       </div>
       
       <style jsx>{`
+        :global(.client-logo-slider) {
+          pointer-events: none;
+        }
         :global(.client-logo-slider .slick-track) {
-          display: flex;
-          align-items: center;
+          animation-play-state: running !important;
+        }
+        :global(.client-logo-slider .slick-slide) {
+          pointer-events: none;
         }
       `}</style>
     </div>
