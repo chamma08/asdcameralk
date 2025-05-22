@@ -18,7 +18,7 @@ const ImageUploadGuidelines = () => {
     <Card className="mb-4 border-2 border-dashed border-blue-200 bg-gradient-to-r from-blue-50 to-purple-50">
       <CardBody className="p-4">
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+          <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
             <span className="text-white text-xs font-bold">!</span>
           </div>
           <h3 className="font-semibold text-gray-800">Image Upload Guidelines</h3>
@@ -185,7 +185,7 @@ export default function Page() {
         <Button
           size="sm"
           variant="ghost"
-          color="primary"
+          color="danger"
           onClick={() => setShowGuidelines(!showGuidelines)}
           className="text-xs"
         >
@@ -212,7 +212,7 @@ export default function Page() {
             isLoading={isLoading} 
             isDisabled={isLoading} 
             type="submit"
-            color="primary"
+            color="default"
             size="lg"
             className="px-8"
           >
