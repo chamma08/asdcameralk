@@ -6,12 +6,22 @@ export const createNewProduct = async ({ data, featureImage, imageList }) => {
     if (!data?.title) {
       throw new Error("Title is required");
     }
+    
+    // Validate categories
+    if (!data?.categoryIds || !Array.isArray(data.categoryIds) || data.categoryIds.length === 0) {
+      throw new Error("At least one category is required");
+    }
+    
     /* if (!featureImage) {
       throw new Error("Feature Image is required");
     } */
-    const featureImageRef = ref(storage, `products/${featureImage?.name}`);
-    await uploadBytes(featureImageRef, featureImage);
-    const featureImageURL = await getDownloadURL(featureImageRef);
+    
+    let featureImageURL = "";
+    if (featureImage) {
+      const featureImageRef = ref(storage, `products/${featureImage?.name}`);
+      await uploadBytes(featureImageRef, featureImage);
+      featureImageURL = await getDownloadURL(featureImageRef);
+    }
   
     let imageURLList = [];
   
@@ -24,14 +34,20 @@ export const createNewProduct = async ({ data, featureImage, imageList }) => {
     }
   
     const newId = doc(collection(db, `ids`)).id;
-  
-    await setDoc(doc(db, `products/${newId}`), {
+
+    // Prepare the product data
+    const productData = {
       ...data,
       featureImageURL: featureImageURL,
       imageList: imageURLList,
       id: newId,
       timestampCreate: Timestamp.now(),
-    });
+    };
+
+    // Remove old categoryId field if it exists to avoid confusion
+    delete productData.categoryId;
+  
+    await setDoc(doc(db, `products/${newId}`), productData);
   };
   
   export const updateProduct = async ({ data, featureImage, imageList }) => {
@@ -40,6 +56,11 @@ export const createNewProduct = async ({ data, featureImage, imageList }) => {
     }
     if (!data?.id) {
       throw new Error("ID is required");
+    }
+
+    // Validate categories
+    if (!data?.categoryIds || !Array.isArray(data.categoryIds) || data.categoryIds.length === 0) {
+      throw new Error("At least one category is required");
     }
   
     let featureImageURL = data?.featureImageURL ?? "";
@@ -59,13 +80,19 @@ export const createNewProduct = async ({ data, featureImage, imageList }) => {
       const url = await getDownloadURL(imageRef);
       imageURLList.push(url);
     }
-  
-    await setDoc(doc(db, `products/${data?.id}`), {
+
+    // Prepare the product data
+    const productData = {
       ...data,
       featureImageURL: featureImageURL,
       imageList: imageURLList,
       timestampUpdate: Timestamp.now(),
-    });
+    };
+
+    // Remove old categoryId field if it exists to avoid confusion
+    delete productData.categoryId;
+  
+    await setDoc(doc(db, `products/${data?.id}`), productData);
   };
   
   export const deleteProduct = async ({ id }) => {
@@ -73,4 +100,39 @@ export const createNewProduct = async ({ data, featureImage, imageList }) => {
       throw new Error("ID is required");
     }
     await deleteDoc(doc(db, `products/${id}`));
+  };
+
+  // Migration function to convert existing products from single category to multiple categories
+  export const migrateProductCategories = async () => {
+    const { getProducts } = await import("./read_server");
+    const products = await getProducts();
+    
+    const migrationsNeeded = products.filter(product => 
+      product.categoryId && !product.categoryIds
+    );
+
+    console.log(`Found ${migrationsNeeded.length} products that need category migration`);
+
+    for (const product of migrationsNeeded) {
+      try {
+        const updatedData = {
+          ...product,
+          categoryIds: [product.categoryId], // Convert single category to array
+        };
+        
+        // Remove the old categoryId field
+        delete updatedData.categoryId;
+        
+        await setDoc(doc(db, `products/${product.id}`), {
+          ...updatedData,
+          timestampUpdate: Timestamp.now(),
+        });
+        
+        console.log(`Migrated product: ${product.title}`);
+      } catch (error) {
+        console.error(`Failed to migrate product ${product.id}:`, error);
+      }
+    }
+    
+    console.log("Category migration completed");
   };

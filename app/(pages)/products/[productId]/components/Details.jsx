@@ -1,4 +1,3 @@
-"use client";
 
 import AddToCartButton from "@/app/components/AddToCartButton";
 import FavoriteButton from "@/app/components/FavoriteButton";
@@ -12,12 +11,27 @@ import { Suspense } from "react";
 import ProductLinks from "./ProductLinks"; // Import the new component
 
 export default function Details({ product }) {
+  // Get categories array - support both new and old format
+  const getProductCategories = () => {
+    if (product?.categoryIds && Array.isArray(product.categoryIds)) {
+      return product.categoryIds;
+    } else if (product?.categoryId) {
+      return [product.categoryId]; // Convert single category to array for backward compatibility
+    }
+    return [];
+  };
+
+  const categories = getProductCategories();
+
   return (
     <div className="w-full flex flex-col gap-3">
       {/* Only show category/brand container if at least one exists */}
-      {(product?.categoryId || product?.brandId) && (
-        <div className="flex gap-3">
-          {product?.categoryId && <Category categoryId={product.categoryId} />}
+      {(categories.length > 0 || product?.brandId) && (
+        <div className="flex flex-wrap gap-2">
+          {/* Render multiple categories */}
+          {categories.map((categoryId) => (
+            <Category key={categoryId} categoryId={categoryId} />
+          ))}
           {product?.brandId && <Brand brandId={product.brandId} />}
         </div>
       )}
@@ -100,9 +114,9 @@ async function Category({ categoryId }) {
     
     return (
       <Link href={`/categories/${categoryId}`}>
-        <div className="flex items-center gap-1 border px-3 py-1 rounded-full">
+        <div className="flex items-center gap-1 border px-3 py-1 rounded-full bg-blue-50 hover:bg-blue-100 transition-colors">
           {category.imageURL && <img className="h-4" src={category.imageURL} alt="" />}
-          <h4 className="text-xs font-semibold">{category.name}</h4>
+          <h4 className="text-xs font-semibold text-blue-700">{category.name}</h4>
         </div>
       </Link>
     );
@@ -118,9 +132,9 @@ async function Brand({ brandId }) {
     if (!brand || !brand.name) return null;
     
     return (
-      <div className="flex items-center gap-1 border px-3 py-1 rounded-full">
+      <div className="flex items-center gap-1 border px-3 py-1 rounded-full bg-gray-50">
         {brand.imageURL && <img className="h-4" src={brand.imageURL} alt="" />}
-        <h4 className="text-xs font-semibold">{brand.name}</h4>
+        <h4 className="text-xs font-semibold text-gray-700">{brand.name}</h4>
       </div>
     );
   } catch (error) {

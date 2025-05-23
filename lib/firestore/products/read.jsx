@@ -101,3 +101,74 @@ export function useProductsByIds({ idsList }) {
     isLoading: data === undefined,
   };
 }
+
+// New hook for products by multiple categories
+export function useProductsByCategories({ categoryIds }) {
+  const { data, error } = useSWRSubscription(
+    ["products", "categories", categoryIds],
+    ([path, , categoryIds], { next }) => {
+      if (!categoryIds || categoryIds.length === 0) {
+        next(null, []);
+        return () => {};
+      }
+
+      const ref = collection(db, path);
+      let q = query(ref, where("categoryIds", "array-contains-any", categoryIds));
+
+      const unsub = onSnapshot(
+        q,
+        (snapshot) =>
+          next(
+            null,
+            snapshot.docs.length === 0
+              ? []
+              : snapshot.docs.map((snap) => snap.data())
+          ),
+        (err) => next(err, null)
+      );
+      return () => unsub();
+    }
+  );
+
+  return {
+    data: data,
+    error: error?.message,
+    isLoading: data === undefined,
+  };
+}
+
+// Hook for products by single category (maintains backward compatibility)
+export function useProductsByCategory({ categoryId }) {
+  const { data, error } = useSWRSubscription(
+    ["products", "category", categoryId],
+    ([path, , categoryId], { next }) => {
+      if (!categoryId) {
+        next(null, []);
+        return () => {};
+      }
+
+      const ref = collection(db, path);
+      // Check both old categoryId field and new categoryIds array for backward compatibility
+      let q = query(ref, where("categoryIds", "array-contains", categoryId));
+
+      const unsub = onSnapshot(
+        q,
+        (snapshot) =>
+          next(
+            null,
+            snapshot.docs.length === 0
+              ? []
+              : snapshot.docs.map((snap) => snap.data())
+          ),
+        (err) => next(err, null)
+      );
+      return () => unsub();
+    }
+  );
+
+  return {
+    data: data,
+    error: error?.message,
+    isLoading: data === undefined,
+  };
+}
