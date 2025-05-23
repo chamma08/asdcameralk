@@ -2,7 +2,6 @@
 
 import { db } from "@/lib/firestore/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-
 import useSWR from "swr";
 
 // -------- REDBAR SETTINGS -------- //
@@ -84,6 +83,11 @@ export const getFooterSettings = async () => {
           Kurunegala: ["(+94) 70 400 9000", "(+94) 76 400 9000"],
           Colombo: ["(+94) 72 500 9000"],
         },
+        addresses: {
+          JaEla: "123 Main Street, JaEla, Sri Lanka",
+          Kurunegala: "456 Central Road, Kurunegala, Sri Lanka",
+          Colombo: "789 Business Avenue, Colombo, Sri Lanka"
+        },
         email: "asdcameralk@gmail.com",
       };
     }
@@ -94,12 +98,9 @@ export const getFooterSettings = async () => {
 };
 
 // Save footer settings
-export const saveFooterSettings = async ({ phoneNumbers, email }) => {
+export const saveFooterSettings = async (footerData) => {
   try {
-    await setDoc(doc(db, "settings", "footer"), {
-      phoneNumbers,
-      email,
-    });
+    await setDoc(doc(db, "settings", "footer"), footerData);
     return true;
   } catch (error) {
     console.error("Error saving footer settings:", error);

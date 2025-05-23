@@ -4,26 +4,33 @@ import React, { useState, useEffect } from "react";
 import { Save, AlertCircle, PlusCircle, Trash2 } from "lucide-react";
 import { saveFooterSettings, useFooterSettings } from "@/app/services/settings";
 
-
 const FooterAdminPanel = () => {
-  const [phoneNumbers, setPhoneNumbers] = useState({
-    "JaEla": [
-      "(+94) 70 300 9000",
-      "(+94) 76 300 9000",
-      "(+94) 70 400 9005"
-    ],
-    "Kurunegala": [
-      "(+94) 70 400 9000",
-      "(+94) 76 400 9000"
-    ],
-    "Colombo": [
-      "(+94) 72 500 9000"
-    ]
+  const [footerData, setFooterData] = useState({
+    phoneNumbers: {
+      "JaEla": [
+        "(+94) 70 300 9000",
+        "(+94) 76 300 9000",
+        "(+94) 70 400 9005"
+      ],
+      "Kurunegala": [
+        "(+94) 70 400 9000",
+        "(+94) 76 400 9000"
+      ],
+      "Colombo": [
+        "(+94) 72 500 9000"
+      ]
+    },
+    addresses: {
+      "JaEla": "123 Main Street, JaEla, Sri Lanka",
+      "Kurunegala": "456 Central Road, Kurunegala, Sri Lanka",
+      "Colombo": "789 Business Avenue, Colombo, Sri Lanka"
+    },
+    email: "asdcameralk@gmail.com"
   });
   
-  const [email, setEmail] = useState("asdcameralk@gmail.com");
   const [newBranchName, setNewBranchName] = useState("");
   const [newPhoneNumber, setNewPhoneNumber] = useState("");
+  const [newBranchAddress, setNewBranchAddress] = useState("");
   const [selectedBranch, setSelectedBranch] = useState("");
   const [saveStatus, setSaveStatus] = useState(null);
   
@@ -31,8 +38,11 @@ const FooterAdminPanel = () => {
 
   useEffect(() => {
     if (data) {
-      setPhoneNumbers(data.phoneNumbers || {});
-      setEmail(data.email || "asdcameralk@gmail.com");
+      setFooterData({
+        phoneNumbers: data.phoneNumbers || footerData.phoneNumbers,
+        addresses: data.addresses || footerData.addresses,
+        email: data.email || footerData.email
+      });
       
       // Select the first branch by default if none is selected
       if (!selectedBranch && Object.keys(data.phoneNumbers || {}).length > 0) {
@@ -44,10 +54,7 @@ const FooterAdminPanel = () => {
   const handleSaveSettings = async () => {
     setSaveStatus("saving");
     try {
-      await saveFooterSettings({
-        phoneNumbers,
-        email
-      });
+      await saveFooterSettings(footerData);
       await refresh(); // Refresh the SWR cache
       setSaveStatus("success");
       setTimeout(() => setSaveStatus(null), 3000);
@@ -60,22 +67,35 @@ const FooterAdminPanel = () => {
 
   const addBranch = () => {
     if (newBranchName.trim()) {
-      setPhoneNumbers(prevPhoneNumbers => ({
-        ...prevPhoneNumbers,
-        [newBranchName.trim()]: []
+      setFooterData(prev => ({
+        ...prev,
+        phoneNumbers: {
+          ...prev.phoneNumbers,
+          [newBranchName.trim()]: []
+        },
+        addresses: {
+          ...prev.addresses,
+          [newBranchName.trim()]: newBranchAddress.trim() || "No address provided"
+        }
       }));
       setSelectedBranch(newBranchName.trim());
       setNewBranchName("");
+      setNewBranchAddress("");
     }
   };
 
   const removeBranch = (branch) => {
-    // Create a new object without the specified branch
-    const updatedPhoneNumbers = { ...phoneNumbers };
-    delete updatedPhoneNumbers[branch];
+    const updatedPhoneNumbers = { ...footerData.phoneNumbers };
+    const updatedAddresses = { ...footerData.addresses };
     
-    // Update the state with the new object
-    setPhoneNumbers(updatedPhoneNumbers);
+    delete updatedPhoneNumbers[branch];
+    delete updatedAddresses[branch];
+    
+    setFooterData(prev => ({
+      ...prev,
+      phoneNumbers: updatedPhoneNumbers,
+      addresses: updatedAddresses
+    }));
     
     // If the deleted branch was selected, select another branch
     if (selectedBranch === branch) {
@@ -86,32 +106,60 @@ const FooterAdminPanel = () => {
 
   const addPhoneNumber = () => {
     if (selectedBranch && newPhoneNumber.trim()) {
-      setPhoneNumbers(prevPhoneNumbers => {
-        const updatedPhoneNumbers = { ...prevPhoneNumbers };
-        updatedPhoneNumbers[selectedBranch] = [
-          ...(updatedPhoneNumbers[selectedBranch] || []),
-          newPhoneNumber.trim()
-        ];
-        return updatedPhoneNumbers;
-      });
+      setFooterData(prev => ({
+        ...prev,
+        phoneNumbers: {
+          ...prev.phoneNumbers,
+          [selectedBranch]: [
+            ...(prev.phoneNumbers[selectedBranch] || []),
+            newPhoneNumber.trim()
+          ]
+        }
+      }));
       setNewPhoneNumber("");
     }
   };
 
   const removePhoneNumber = (branch, index) => {
-    setPhoneNumbers(prevPhoneNumbers => {
-      const updatedPhoneNumbers = { ...prevPhoneNumbers };
-      updatedPhoneNumbers[branch] = updatedPhoneNumbers[branch].filter((_, i) => i !== index);
-      return updatedPhoneNumbers;
-    });
+    setFooterData(prev => ({
+      ...prev,
+      phoneNumbers: {
+        ...prev.phoneNumbers,
+        [branch]: prev.phoneNumbers[branch].filter((_, i) => i !== index)
+      }
+    }));
   };
 
   const updatePhoneNumber = (branch, index, value) => {
-    setPhoneNumbers(prevPhoneNumbers => {
-      const updatedPhoneNumbers = { ...prevPhoneNumbers };
-      updatedPhoneNumbers[branch][index] = value;
-      return updatedPhoneNumbers;
-    });
+    setFooterData(prev => ({
+      ...prev,
+      phoneNumbers: {
+        ...prev.phoneNumbers,
+        [branch]: prev.phoneNumbers[branch].map((num, i) => 
+          i === index ? value : num
+        )
+      }
+    }));
+  };
+
+  const removeAddress = (branch) => {
+    setFooterData(prev => ({
+      ...prev,
+      addresses: {
+        ...prev.addresses,
+        [branch]: ""
+      }
+    }));
+  };
+
+  const updateBranchAddress = (branch, value) => {
+    setFooterData(prev => ({
+      ...prev,
+      addresses: {
+        ...prev.addresses,
+        [branch]: value
+      }
+    }));
   };
 
   if (loading) {
@@ -134,8 +182,8 @@ const FooterAdminPanel = () => {
           </label>
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={footerData.email}
+            onChange={(e) => setFooterData(prev => ({ ...prev, email: e.target.value }))}
             className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -144,7 +192,7 @@ const FooterAdminPanel = () => {
         <div>
           <div className="flex flex-wrap items-center gap-2 mb-4">
             <label className="text-sm font-medium text-gray-700">Branches:</label>
-            {Object.keys(phoneNumbers).map(branch => (
+            {Object.keys(footerData.phoneNumbers).map(branch => (
               <button
                 key={branch}
                 onClick={() => setSelectedBranch(branch)}
@@ -160,20 +208,29 @@ const FooterAdminPanel = () => {
           </div>
           
           {/* Add New Branch */}
-          <div className="flex items-center mb-6">
+          <div className="space-y-3 mb-6">
+            <div className="flex items-center">
+              <input
+                type="text"
+                value={newBranchName}
+                onChange={(e) => setNewBranchName(e.target.value)}
+                placeholder="Branch name"
+                className="flex-1 p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={addBranch}
+                className="p-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700"
+              >
+                <PlusCircle size={20} />
+              </button>
+            </div>
             <input
               type="text"
-              value={newBranchName}
-              onChange={(e) => setNewBranchName(e.target.value)}
-              placeholder="Add new branch"
-              className="flex-1 p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={newBranchAddress}
+              onChange={(e) => setNewBranchAddress(e.target.value)}
+              placeholder="Branch address"
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <button
-              onClick={addBranch}
-              className="p-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700"
-            >
-              <PlusCircle size={20} />
-            </button>
           </div>
 
           {/* Selected Branch Phone Numbers */}
@@ -190,8 +247,33 @@ const FooterAdminPanel = () => {
                 </button>
               </div>
               
+              <div className="mb-4">
+                <div className="flex justify-between items-center mb-1">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Address
+                  </label>
+                  {footerData.addresses[selectedBranch] && (
+                    <button
+                      onClick={() => removeAddress(selectedBranch)}
+                      className="text-xs text-red-600 hover:text-red-800"
+                    >
+                      Remove Address
+                    </button>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  value={footerData.addresses[selectedBranch] || ""}
+                  onChange={(e) => updateBranchAddress(selectedBranch, e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              
               <div className="space-y-2 mb-4">
-                {phoneNumbers[selectedBranch]?.map((phone, index) => (
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone Numbers
+                </label>
+                {footerData.phoneNumbers[selectedBranch]?.map((phone, index) => (
                   <div key={index} className="flex items-center">
                     <input
                       type="text"
