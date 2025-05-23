@@ -125,7 +125,7 @@ export default function ClientLogoSlider() {
         <div className="relative">
           <Slider {...settings} className="client-logo-slider">
             {displayLogos.map((logo, index) => (
-              <div key={`${logo.id}-${index}`} className="px-4 focus:outline-none">
+              <div key={`${logo.id}-${index}`} className="px-2 focus:outline-none">
                 <div className="h-28 flex items-center justify-center">
                   <div className="rounded-lg overflow-hidden bg-white border border-gray-200 p-2 shadow-sm h-24 w-24 flex items-center justify-center">
                     <img
