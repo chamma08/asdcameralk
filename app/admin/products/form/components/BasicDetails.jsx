@@ -8,6 +8,7 @@ export default function BasicDetails({ data, handleData }) {
   const { data: brands } = useBrands();
   const { data: categories } = useCategories();
   const [productLinks, setProductLinks] = useState([{ title: "", url: "" }]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   // Initialize product links from data
   useEffect(() => {
@@ -35,6 +36,33 @@ export default function BasicDetails({ data, handleData }) {
       }
     }
   }, [data?.links]);
+
+  // Initialize selected categories from data
+  useEffect(() => {
+    if (data?.categoryIds && Array.isArray(data.categoryIds)) {
+      setSelectedCategories(data.categoryIds);
+    } else if (data?.categoryId) {
+      // Handle backward compatibility - convert single categoryId to array
+      setSelectedCategories([data.categoryId]);
+      handleData("categoryIds", [data.categoryId]);
+    } else {
+      setSelectedCategories([]);
+    }
+  }, [data?.categoryIds, data?.categoryId]);
+
+  // Handle category selection
+  const handleCategoryChange = (categoryId) => {
+    let updatedCategories;
+    if (selectedCategories.includes(categoryId)) {
+      // Remove category if already selected
+      updatedCategories = selectedCategories.filter(id => id !== categoryId);
+    } else {
+      // Add category if not selected
+      updatedCategories = [...selectedCategories, categoryId];
+    }
+    setSelectedCategories(updatedCategories);
+    handleData("categoryIds", updatedCategories);
+  };
 
   // Handle links change and update parent
   const handleLinkChange = (index, field, value) => {
@@ -191,28 +219,43 @@ export default function BasicDetails({ data, handleData }) {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-gray-500 text-xs" htmlFor="product-category">
-          Category <span className="text-red-500">*</span>{" "}
+        <label className="text-gray-500 text-xs">
+          Categories <span className="text-red-500">*</span>{" "}
         </label>
-        <select
-          type="text"
-          id="product-category"
-          name="product-category"
-          value={data?.categoryId ?? ""}
-          onChange={(e) => {
-            handleData("categoryId", e.target.value);
-          }}
-          className="border px-4 py-2 rounded-lg w-full outline-none"
-        >
-          <option value="">Select Category</option>
-          {categories?.map((item) => {
-            return (
-              <option value={item?.id} key={item?.id}>
-                {item?.name}
-              </option>
-            );
-          })}
-        </select>
+        <div className="border rounded-lg p-3 max-h-48 overflow-y-auto">
+          {categories?.length === 0 ? (
+            <p className="text-gray-400 text-sm">No categories available</p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {categories?.map((category) => (
+                <label key={category?.id} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={selectedCategories.includes(category?.id)}
+                    onChange={() => handleCategoryChange(category?.id)}
+                    className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                  />
+                  <span className="text-sm">{category?.name}</span>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+        {selectedCategories.length > 0 && (
+          <div className="mt-2">
+            <p className="text-xs text-gray-500 mb-1">Selected categories:</p>
+            <div className="flex flex-wrap gap-1">
+              {selectedCategories.map((categoryId) => {
+                const category = categories?.find(cat => cat.id === categoryId);
+                return category ? (
+                  <span key={categoryId} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                    {category.name}
+                  </span>
+                ) : null;
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col gap-1">
