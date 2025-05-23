@@ -40,7 +40,7 @@ export default async function Page({ params }) {
       </div> */}
       <div className="mt-10">
         <hr className="border-t-2 border-gray-300" />
-        <RelatedProducts categoryId={product?.categoryId} />
+        <RelatedProducts product={product} />
       </div>
     </main>
   );

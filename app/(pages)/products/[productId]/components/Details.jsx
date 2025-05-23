@@ -49,7 +49,7 @@ export default function Details({ product }) {
       
       {/* Modified pricing logic */}
       {(product?.salePrice || product?.price) && (
-        <h3 className="text-green-500 font-bold text-lg">
+        <h3 className="text-red-500 font-bold text-lg">
           {product?.salePrice && product?.price && product.salePrice !== product.price ? (
             <>
               LKR {product.salePrice}{" "}

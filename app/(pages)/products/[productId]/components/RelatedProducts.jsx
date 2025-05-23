@@ -1,4 +1,4 @@
-"use client";
+
 
 import { ProductCard } from "@/app/components/Products";
 import { getProductsByCategory, getProductsByCategories } from "@/lib/firestore/products/read_server";
