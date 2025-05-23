@@ -11,6 +11,7 @@ import {
   LibraryBig,
   LogOut,
   PackageOpen,
+  Share,
   ShieldCheck,
   ShoppingCart,
   Star,
@@ -34,6 +35,11 @@ export default function Sidebar() {
       name: "Images Slider",
       link: "/admin/images",
       icon: <GalleryHorizontalEnd className="h-5 w-5" />,
+    },
+    {
+      name: "Pop-up Message",
+      link: "/admin/pop-up-message",
+      icon: <Share className="h-5 w-5"/>
     },
     {
       name: "Configurations",

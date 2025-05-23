@@ -23,6 +23,7 @@ import { getBanners } from "@/lib/firestore/banners/read_server";
 import { getLogos } from "@/lib/firestore/client-logos/read_server";
 import ClientLogoSlider from "./components/ClientLogoSlider";
 import NavBar from "./components/NavBar";
+import PopupMessage from "./components/PopupMessage";
 
 export const dynamic = 'force-dynamic';
 
@@ -45,6 +46,7 @@ export default async function Home() {
       <NavBar />
       {/* <SideBar /> */}
       {/* <ImageSlider images={images}/> */}
+      <PopupMessage />
       <FeaturedProductSlider featuredProducts={featuredProducts} />
       {/* <Collections collections={collections} /> */}
       <Categories categories={categories} />
