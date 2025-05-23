@@ -54,7 +54,7 @@ export default async function RelatedProducts({ product }) {
     <div className="w-full flex justify-center">
       <div className="flex flex-col gap-5 max-w-[900px] p-5">
         <div className="text-center">
-          <h1 className="font-semibold text-lg">Related Products</h1>
+          <h1 className="font-semibold text-lg">Suggestions</h1>
           {categories.length > 1 && (
             <p className="text-sm text-gray-600 mt-1">
               Products from similar categories
