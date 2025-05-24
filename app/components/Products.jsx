@@ -3,7 +3,7 @@
 import AuthContextProvider from "@/context/AuthContext";
 import { getProductReviewCounts } from "@/lib/firestore/products/count/read";
 import Link from "next/link";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useState, useMemo, useEffect } from "react";
 import MyRating from "./MyRating";
 import { easeInOut, motion } from "framer-motion";
 import FavoriteButton from "./FavoriteButton";
@@ -36,8 +36,36 @@ const fadeUp = (delay) => {
   };
 };
 
-export default function ProductsGridView({ products }) {
+// Function to shuffle array (Fisher-Yates shuffle)
+const shuffleArray = (array) => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
+export default function ProductsGridView({ products, showSeeMore = true, itemsPerRow = 5 }) {
   const [hoveredProduct, setHoveredProduct] = useState(null);
+  const [isClient, setIsClient] = useState(false);
+
+  // Fix hydration error by ensuring client-side rendering for randomization
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Randomize products and limit to 3 rows
+  const displayedProducts = useMemo(() => {
+    if (!products || products.length === 0) return [];
+    
+    // Only randomize on client-side to avoid hydration mismatch
+    const productsToShow = isClient ? shuffleArray(products) : products;
+    const maxItems = itemsPerRow * 3; // 3 rows
+    return productsToShow.slice(0, maxItems);
+  }, [products, itemsPerRow, isClient]);
+
+  const hasMoreProducts = products && products.length > displayedProducts.length;
 
   return (
     <section className="w-full flex justify-center bg-gray-50">
@@ -52,11 +80,12 @@ export default function ProductsGridView({ products }) {
           <p className="text-gray-500 text-sm mt-2">Quality equipment available for rent</p>
         </motion.div>
         
+        {/* Show loading state during initial render to prevent hydration mismatch */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-          {products?.map((item, index) => (
+          {displayedProducts.map((item, index) => (
             <ProductCard 
               product={item} 
-              key={`product-${item?.id}-${index}`} // Better key for re-rendering
+              key={`product-${item?.id}-${index}`}
               delay={index * 0.1}
               isHovered={hoveredProduct === item.id}
               onHover={() => setHoveredProduct(item.id)}
@@ -64,6 +93,35 @@ export default function ProductsGridView({ products }) {
             />
           ))}
         </div>
+
+        {hasMoreProducts && showSeeMore && (
+          <motion.div 
+            variants={fadeUp(0.4)}
+            initial="hidden"
+            whileInView="show"
+            className="flex justify-center mt-8"
+          >
+            <Link 
+              href="/product"
+              className="inline-flex items-center gap-2 bg-red-600 hover:bg-transparent hover:text-black border-1 border-red-600 text-white px-8 py-3 rounded-2xl font-medium transition-all duration-200 hover:scale-105 shadow-md hover:shadow-lg"
+            >
+              <span>See More Products</span>
+              <svg 
+                className="w-4 h-4" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M9 5l7 7-7 7" 
+                />
+              </svg>
+            </Link>
+          </motion.div>
+        )}
       </div>
     </section>
   );
