@@ -25,6 +25,7 @@ import ClientLogoSlider from "./components/ClientLogoSlider";
 import NavBar from "./components/NavBar";
 import PopupMessage from "./components/PopupMessage";
 import ResponsiveMenuBar from "./components/Bar";
+import TimeLimitedDemo from "./components/TimeLimitedDemo"; 
 
 export const dynamic = 'force-dynamic';
 
@@ -40,25 +41,31 @@ export default async function Home() {
       getBanners(),
       getLogos(),
     ]);
+
   return (
-    <main className="w-screen h-screen overflow-x-hidden overflow-y-auto">
-      <Redbar />
-      <Header />
-      <NavBar />
-      <ResponsiveMenuBar />
-      {/* <SideBar /> */}
-      {/* <ImageSlider images={images}/> */}
-      <PopupMessage />
-      <FeaturedProductSlider featuredProducts={featuredProducts} />
-      {/* <Collections collections={collections} /> */}
-      <Categories categories={categories} />
-      <Services />
-      <ClientLogoSlider logos={logos} />
-      <ProductsGridView products={products} />
-      <Banners banners={banners}/>
-      {/* <CustomerReviews /> */}
-      <Brands brands={brands} />
-      <Footer />
-    </main>
+    <TimeLimitedDemo 
+      demoStartDate="2025-06-01" 
+      demoLengthDays={14} 
+    >
+      <main className="w-screen h-screen overflow-x-hidden overflow-y-auto">
+        <Redbar />
+        <Header />
+        <NavBar />
+        <ResponsiveMenuBar />
+        {/* <SideBar /> */}
+        {/* <ImageSlider images={images}/> */}
+        <PopupMessage />
+        <FeaturedProductSlider featuredProducts={featuredProducts} />
+        {/* <Collections collections={collections} /> */}
+        <Categories categories={categories} />
+        <Services />
+        <ClientLogoSlider logos={logos} />
+        <ProductsGridView products={products} />
+        <Banners banners={banners}/>
+        {/* <CustomerReviews /> */}
+        <Brands brands={brands} />
+        <Footer />
+      </main>
+    </TimeLimitedDemo>
   );
 }
