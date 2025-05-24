@@ -2,8 +2,9 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence, easeInOut } from 'framer-motion';
-import { Search, Filter, X, ShoppingBag, Star, Heart, Plus, Eye } from 'lucide-react';
+import { Search, Filter, X, ShoppingBag, Star, Heart, Plus, Eye, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { useProducts } from '@/lib/firestore/products/read';
 import { useCategories } from '@/lib/firestore/categories/read';
@@ -73,6 +74,7 @@ function ImageModal({ isOpen, onClose, imageUrl, productTitle }) {
 }
 
 export default function ProductsPage() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
@@ -206,16 +208,31 @@ export default function ProductsPage() {
           className="mb-8"
         >
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-            {/* Search Bar */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none transition-colors"
-              />
+            {/* Back Button and Search Bar */}
+            <div className="flex items-center gap-3 flex-1 max-w-lg">
+              {/* Back Button */}
+              <motion.button
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+                onClick={() => router.back()}
+                className="flex items-center gap-2 px-3 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors group flex-shrink-0"
+              >
+                <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+                <span className="text-sm font-medium hidden sm:inline">Back</span>
+              </motion.button>
+
+              {/* Search Bar */}
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none transition-colors"
+                />
+              </div>
             </div>
 
             {/* Filter Toggle and Sort */}
@@ -530,7 +547,7 @@ function ProductCard({ product, delay, isHovered, onHover, onLeave, onMessenger,
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 bg-black cursor-pointer bg-opacity-5 flex items-center justify-center"
+                  className="absolute inset-0 bg-black bg-opacity-5 cursor-pointer flex items-center justify-center"
                 >
                   {/* <motion.button
                     initial={{ scale: 0.8 }}
