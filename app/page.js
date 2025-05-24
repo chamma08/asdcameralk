@@ -24,6 +24,7 @@ import { getLogos } from "@/lib/firestore/client-logos/read_server";
 import ClientLogoSlider from "./components/ClientLogoSlider";
 import NavBar from "./components/NavBar";
 import PopupMessage from "./components/PopupMessage";
+import ResponsiveMenuBar from "./components/Bar";
 
 export const dynamic = 'force-dynamic';
 
@@ -44,6 +45,7 @@ export default async function Home() {
       <Redbar />
       <Header />
       <NavBar />
+      <ResponsiveMenuBar />
       {/* <SideBar /> */}
       {/* <ImageSlider images={images}/> */}
       <PopupMessage />
