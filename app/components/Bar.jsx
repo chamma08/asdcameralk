@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useCategories } from "@/lib/firestore/categories/read";
 import { getProductsByCategory } from "@/lib/firestore/products/read_server";
@@ -14,10 +14,14 @@ const ResponsiveMenuBar = () => {
   const [products, setProducts] = useState([]);
   const [productsLoading, setProductsLoading] = useState(false);
   const [allProducts, setAllProducts] = useState([]);
+  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
   
   // Use ref to track timeout for proper cleanup
   const hoverTimeoutRef = useRef(null);
   const isHoveringRef = useRef(false);
+  const categoriesContainerRef = useRef(null);
+  const touchStartRef = useRef(null);
+  const touchEndRef = useRef(null);
 
   const {
     data: categories = [],
@@ -61,10 +65,14 @@ const ResponsiveMenuBar = () => {
     return Array.from(categoryIds);
   }, [allProducts]);
 
-  // Limit categories to 10 for better display
+  // Show all categories with smooth scrolling behavior
   const displayCategories = useMemo(() => {
-    return categories.slice(0, 10);
+    return categories;
   }, [categories]);
+
+  // Calculate how many categories to show at once
+  const categoriesPerView = 5;
+  const maxVisibleIndex = Math.max(0, displayCategories.length - categoriesPerView);
 
   // Optimized product fetching with cleanup
   useEffect(() => {
@@ -123,7 +131,7 @@ const ResponsiveMenuBar = () => {
   }, [hoveredCategory, allProducts]);
 
   // Fixed hover handlers
-  const handleMouseEnter = useCallback((categoryId) => {
+  const handleMouseEnter = useCallback((categoryId, index) => {
     // Clear any existing timeout
     if (hoverTimeoutRef.current) {
       clearTimeout(hoverTimeoutRef.current);
@@ -132,7 +140,14 @@ const ResponsiveMenuBar = () => {
     
     isHoveringRef.current = true;
     setHoveredCategory(categoryId);
-  }, []);
+    
+    // Auto-adjust view to keep hovered category visible
+    if (index < selectedCategoryIndex) {
+      setSelectedCategoryIndex(Math.max(0, index));
+    } else if (index >= selectedCategoryIndex + categoriesPerView) {
+      setSelectedCategoryIndex(Math.min(maxVisibleIndex, index - categoriesPerView + 1));
+    }
+  }, [selectedCategoryIndex, maxVisibleIndex]);
 
   const handleMouseLeave = useCallback(() => {
     isHoveringRef.current = false;
@@ -147,7 +162,7 @@ const ResponsiveMenuBar = () => {
       if (!isHoveringRef.current) {
         setHoveredCategory(null);
       }
-    }, 150); // Reduced delay for better responsiveness
+    }, 150);
   }, []);
 
   // Handle dropdown mouse enter (to keep it open when hovering over dropdown)
@@ -240,7 +255,6 @@ const ResponsiveMenuBar = () => {
 
   // Handle mobile category click
   const handleMobileCategoryClick = useCallback((categoryId) => {
-    // Navigate to products page with category filter or open category products
     window.location.href = `/products?category=${categoryId}`;
     setMobileMenuOpen(false);
   }, []);
@@ -249,6 +263,58 @@ const ResponsiveMenuBar = () => {
   const toggleMobileMenu = useCallback(() => {
     setMobileMenuOpen((prev) => !prev);
   }, []);
+
+  // Swipe functionality for mobile
+  const handleTouchStart = useCallback((e) => {
+    touchStartRef.current = e.targetTouches[0].clientX;
+  }, []);
+
+  const handleTouchMove = useCallback((e) => {
+    touchEndRef.current = e.targetTouches[0].clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (!touchStartRef.current || !touchEndRef.current) return;
+    
+    const distance = touchStartRef.current - touchEndRef.current;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe && selectedCategoryIndex < maxVisibleIndex) {
+      setSelectedCategoryIndex(prev => Math.min(maxVisibleIndex, prev + 1));
+    }
+    if (isRightSwipe && selectedCategoryIndex > 0) {
+      setSelectedCategoryIndex(prev => Math.max(0, prev - 1));
+    }
+
+    touchStartRef.current = null;
+    touchEndRef.current = null;
+  }, [selectedCategoryIndex, maxVisibleIndex]);
+
+  // Navigate categories with arrow keys
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowLeft' && selectedCategoryIndex > 0) {
+        setSelectedCategoryIndex(prev => Math.max(0, prev - 1));
+      }
+      if (e.key === 'ArrowRight' && selectedCategoryIndex < maxVisibleIndex) {
+        setSelectedCategoryIndex(prev => Math.min(maxVisibleIndex, prev + 1));
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedCategoryIndex, maxVisibleIndex]);
+
+  // Handle category navigation buttons
+  const navigateToCategory = useCallback((direction) => {
+    if (direction === 'prev' && selectedCategoryIndex > 0) {
+      setSelectedCategoryIndex(prev => Math.max(0, prev - 1));
+    }
+    if (direction === 'next' && selectedCategoryIndex < maxVisibleIndex) {
+      setSelectedCategoryIndex(prev => Math.min(maxVisibleIndex, prev + 1));
+    }
+  }, [selectedCategoryIndex, maxVisibleIndex]);
 
   // Error boundary for image loading
   const handleImageError = useCallback((e) => {
@@ -288,43 +354,133 @@ const ResponsiveMenuBar = () => {
       {/* Main Menu Bar */}
       <nav className="bg-black text-white shadow-lg relative z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center h-16">
-            {/* Desktop Menu - Centered */}
-            <div className="hidden md:block">
-              <div className="flex items-baseline space-x-1">
-                {displayCategories.map((category) => (
-                  <div
-                    key={category.id}
-                    className="relative"
-                    onMouseEnter={() => handleMouseEnter(category.id)}
-                    onMouseLeave={handleMouseLeave}
-                  >
-                    <motion.button
-                      className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center ${
-                        hoveredCategory === category.id
-                          ? 'bg-red-600 text-white'
-                          : 'hover:bg-red-600 hover:text-white'
-                      }`}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {category.name}
-                      <ChevronDown className="ml-1 h-4 w-4" />
-                    </motion.button>
-                  </div>
-                ))}
+          <div className="flex items-center justify-center h-20">
+            {/* Desktop Menu - Centered with Navigation */}
+            <div className="hidden md:flex items-center w-full max-w-6xl gap-6">
+              {/* Left Navigation Arrow */}
+              {selectedCategoryIndex > 0 && (
+                <motion.button
+                  onClick={() => navigateToCategory('prev')}
+                  className="bg-red-600 hover:bg-red-700 text-white rounded-full p-2 shadow-lg transition-all duration-200 flex-shrink-0"
+                  aria-label="Previous categories"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </motion.button>
+              )}
+
+              {/* Categories Container */}
+              <div 
+                ref={categoriesContainerRef}
+                className="flex-1 overflow-hidden"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                <motion.div 
+                  className="flex items-center gap-3"
+                  animate={{ 
+                    x: selectedCategoryIndex * -200 
+                  }}
+                  transition={{ 
+                    type: "spring", 
+                    stiffness: 400, 
+                    damping: 40,
+                    duration: 0.6
+                  }}
+                >
+                  {displayCategories.map((category, index) => {
+                    const isVisible = index >= selectedCategoryIndex && index < selectedCategoryIndex + categoriesPerView;
+                    
+                    return (
+                      <motion.div
+                        key={category.id}
+                        className="relative flex-shrink-0"
+                        onMouseEnter={() => handleMouseEnter(category.id, index)}
+                        onMouseLeave={handleMouseLeave}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ 
+                          opacity: isVisible ? 1 : 0.3,
+                          y: 0,
+                          scale: isVisible ? 1 : 0.9
+                        }}
+                        transition={{ 
+                          duration: 0.3,
+                          delay: isVisible ? (index - selectedCategoryIndex) * 0.1 : 0
+                        }}
+                      >
+                        <motion.button
+                          className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 flex items-center whitespace-nowrap min-w-[180px] justify-center relative overflow-hidden ${
+                            hoveredCategory === category.id
+                              ? 'bg-red-600 text-white shadow-lg transform scale-105'
+                              : 'hover:bg-red-600/20 hover:text-white border border-gray-600 hover:border-red-600'
+                          }`}
+                          whileHover={{ 
+                            scale: 1.05,
+                            transition: { duration: 0.2 }
+                          }}
+                          whileTap={{ scale: 0.95 }}
+                          title={category.name}
+                        >
+                          {/* Background gradient effect */}
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-red-600 to-red-700"
+                            initial={{ x: '-100%' }}
+                            animate={{ 
+                              x: hoveredCategory === category.id ? '0%' : '-100%'
+                            }}
+                            transition={{ duration: 0.3 }}
+                          />
+                          
+                          <span className="relative z-10 truncate max-w-[150px]">
+                            {category.name}
+                          </span>
+                          <motion.div
+                            className="relative z-10 ml-2"
+                            animate={{ 
+                              rotate: hoveredCategory === category.id ? 180 : 0 
+                            }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            <ChevronDown className="h-4 w-4 flex-shrink-0" />
+                          </motion.div>
+                        </motion.button>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
               </div>
+
+              {/* Right Navigation Arrow */}
+              {selectedCategoryIndex < maxVisibleIndex && (
+                <motion.button
+                  onClick={() => navigateToCategory('next')}
+                  className="bg-red-600 hover:bg-red-700 text-white rounded-full p-2 shadow-lg transition-all duration-200 flex-shrink-0"
+                  aria-label="Next categories"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </motion.button>
+              )}
             </div>
 
             {/* Mobile menu button */}
             <div className="md:hidden">
-              <button
+              <motion.button
                 onClick={toggleMobileMenu}
-                className="bg-red-600 inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                className="bg-red-600 inline-flex items-center justify-center p-3 rounded-lg text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white shadow-lg"
                 aria-label="Open mobile menu"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <Menu className="h-6 w-6" />
-              </button>
+              </motion.button>
             </div>
           </div>
         </div>
@@ -345,17 +501,26 @@ const ResponsiveMenuBar = () => {
                 {productsLoading ? (
                   <div className="flex items-center justify-center py-12">
                     <div className="animate-spin rounded-full h-8 w-8 border-2 border-red-500 border-t-transparent" />
-                    <span className="ml-2 text-gray-600">
+                    <span className="ml-3 text-gray-600 font-medium">
                       Loading products...
                     </span>
                   </div>
                 ) : products.length > 0 ? (
                   <>
-                    <div className="mb-4">
+                    <motion.div 
+                      className="mb-6"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                    >
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">
+                        {currentCategoryName}
+                      </h3>
                       <p className="text-sm text-gray-600">
-                        Found {products.length} products
+                        {products.length} product{products.length !== 1 ? 's' : ''} available
                       </p>
-                    </div>
+                    </motion.div>
+                    
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
                       {products.slice(0, 12).map((product, index) => (
                         <Link
@@ -369,9 +534,9 @@ const ResponsiveMenuBar = () => {
                             initial="hidden"
                             animate="visible"
                             transition={{ delay: index * 0.05 }}
-                            whileHover={{ y: -5 }}
+                            whileHover={{ y: -8, transition: { duration: 0.2 } }}
                           >
-                            <div className="relative overflow-hidden rounded-lg bg-gray-100 w-full h-40 mb-3 border border-gray-200">
+                            <div className="relative overflow-hidden rounded-xl bg-gray-100 w-full h-40 mb-3 border border-gray-200 shadow-sm group-hover:shadow-lg transition-all duration-300">
                               <img
                                 src={
                                   product.imageList?.[0] ||
@@ -380,11 +545,11 @@ const ResponsiveMenuBar = () => {
                                   "/api/placeholder/300/300"
                                 }
                                 alt={product.name || "Product"}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                 onError={handleImageError}
                                 loading="lazy"
                               />
-                              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300" />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                             </div>
 
                             <h3 className="text-sm font-medium text-gray-900 group-hover:text-red-600 transition-colors duration-200 text-center line-clamp-2 min-h-[2.5rem] leading-tight">
@@ -394,26 +559,40 @@ const ResponsiveMenuBar = () => {
                         </Link>
                       ))}
                     </div>
+                    
                     {products.length > 12 && (
-                      <div className="mt-8 text-center">
-                        <Link href="/products">
+                      <motion.div 
+                        className="mt-8 text-center"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                      >
+                        <Link href={`/products?category=${hoveredCategory}`}>
                           <motion.button
-                            className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition-colors duration-200 font-medium"
+                            className="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-3 rounded-full hover:from-red-700 hover:to-red-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                           >
                             View All Products ({products.length})
                           </motion.button>
                         </Link>
-                      </div>
+                      </motion.div>
                     )}
                   </>
                 ) : (
-                  <div className="text-center py-12">
-                    <p className="text-gray-500 text-lg mb-2">
+                  <motion.div 
+                    className="text-center py-12"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                  >
+                    <div className="text-gray-400 text-6xl mb-4">📦</div>
+                    <p className="text-gray-500 text-lg mb-2 font-medium">
                       No products found in this category
                     </p>
-                  </div>
+                    <p className="text-gray-400 text-sm">
+                      Check back later for new additions
+                    </p>
+                  </motion.div>
                 )}
               </div>
             </motion.div>
@@ -426,7 +605,7 @@ const ResponsiveMenuBar = () => {
         {mobileMenuOpen && (
           <>
             <motion.div
-              className="fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden"
+              className="fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden backdrop-blur-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -434,52 +613,65 @@ const ResponsiveMenuBar = () => {
             />
 
             <motion.div
-              className="fixed top-0 right-0 h-full w-80 bg-white shadow-xl z-50 md:hidden"
+              className="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-50 md:hidden"
               variants={mobileMenuVariants}
               initial="hidden"
               animate="visible"
               exit="hidden"
             >
-              <div className="flex items-center justify-between p-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">
+              <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-red-600 to-red-700">
+                <h2 className="text-xl font-bold text-white">
                   Categories
                 </h2>
-                <button
+                <motion.button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+                  className="p-2 rounded-lg text-white hover:bg-white/20 transition-colors duration-200"
                   aria-label="Close mobile menu"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                 >
                   <X className="h-6 w-6" />
-                </button>
+                </motion.button>
               </div>
 
-              <div className="py-4 overflow-y-auto">
+              <div className="py-4 overflow-y-auto max-h-full">
                 {categories.map((category, index) => (
                   <motion.button
                     key={category.id}
-                    className="w-full text-left px-4 py-3 text-gray-900 hover:bg-red-50 hover:text-red-600 transition-colors duration-200 border-b border-gray-100 flex items-center justify-between"
+                    className="w-full text-left px-6 py-4 text-gray-900 hover:bg-red-50 hover:text-red-600 transition-all duration-200 border-b border-gray-100 flex items-center justify-between group"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{
                       opacity: 1,
                       x: 0,
-                      transition: { delay: index * 0.1 },
+                      transition: { delay: index * 0.05 },
                     }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleMobileCategoryClick(category.id)}
                   >
-                    <span className="font-medium">{category.name}</span>
-                    <ChevronDown className="h-4 w-4 transform rotate-[-90deg] text-gray-400" />
+                    <span className="font-medium truncate group-hover:font-semibold transition-all duration-200">
+                      {category.name}
+                    </span>
+                    <motion.div
+                      className="h-4 w-4 text-gray-400 group-hover:text-red-600 flex-shrink-0"
+                      whileHover={{ x: 5 }}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </motion.div>
                   </motion.button>
                 ))}
                 
                 {categories.length === 0 && (
-                  <div className="px-4 py-8 text-center text-gray-500">
-                    <p>No categories available</p>
+                  <div className="px-6 py-12 text-center text-gray-500">
+                    <div className="text-4xl mb-4">📂</div>
+                    <p className="font-medium">No categories available</p>
+                    <p className="text-sm mt-1">Check back later</p>
                   </div>
                 )}
                 
-                <div className="px-4 py-3 text-xs text-gray-500 border-t border-gray-200 mt-4">
-                  Tap any category to view products
+                <div className="px-6 py-4 text-xs text-gray-500 border-t border-gray-200 mt-4 bg-gray-50">
+                  <p className="text-center font-medium">
+                    Tap any category to view products
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -489,7 +681,7 @@ const ResponsiveMenuBar = () => {
 
       {/* Overlay to prevent content interaction when dropdown is open */}
       {hoveredCategory && (
-        <div className="fixed inset-0 z-30" style={{ top: "64px" }} />
+        <div className="fixed inset-0 z-30" style={{ top: "80px" }} />
       )}
     </div>
   );
