@@ -513,9 +513,6 @@ const ResponsiveMenuBar = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 }}
                     >
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">
-                        {currentCategoryName}
-                      </h3>
                       <p className="text-sm text-gray-600">
                         {products.length} product{products.length !== 1 ? 's' : ''} available
                       </p>
