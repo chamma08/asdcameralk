@@ -325,8 +325,8 @@ const ResponsiveMenuBar = () => {
   // Loading state
   if (categoriesLoading) {
     return (
-      <div className="w-full h-16 bg-black flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-red-500 border-t-transparent" />
+      <div className="w-full h-16 bg-gradient-to-r from-red-600 via-red-500 to-red-600 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-white/30 border-t-white" />
       </div>
     );
   }
@@ -334,8 +334,8 @@ const ResponsiveMenuBar = () => {
   // Error state
   if (categoriesError) {
     return (
-      <div className="w-full h-16 bg-black flex items-center justify-center">
-        <div className="text-red-500 text-sm">Error loading categories</div>
+      <div className="w-full h-16 bg-gradient-to-r from-red-600 via-red-500 to-red-600 flex items-center justify-center">
+        <div className="text-white/90 text-sm font-medium">Error loading categories</div>
       </div>
     );
   }
@@ -343,8 +343,8 @@ const ResponsiveMenuBar = () => {
   // No categories state
   if (!categories.length) {
     return (
-      <div className="w-full h-16 bg-black flex items-center justify-center">
-        <div className="text-gray-400 text-sm">No categories available</div>
+      <div className="w-full h-16 bg-gradient-to-r from-red-600 via-red-500 to-red-600 flex items-center justify-center">
+        <div className="text-white/70 text-sm">No categories available</div>
       </div>
     );
   }
@@ -352,7 +352,7 @@ const ResponsiveMenuBar = () => {
   return (
     <div className="relative">
       {/* Main Menu Bar */}
-      <nav className="bg-black text-white shadow-lg relative z-50">
+      <nav className="bg-[#FF0000] text-white shadow-2xl relative z-50 border-b-4 border-red-700/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center h-20">
             {/* Desktop Menu - Centered with Navigation */}
@@ -361,7 +361,7 @@ const ResponsiveMenuBar = () => {
               {selectedCategoryIndex > 0 && (
                 <motion.button
                   onClick={() => navigateToCategory('prev')}
-                  className="bg-red-600 hover:bg-red-700 text-white rounded-full p-2 shadow-lg transition-all duration-200 flex-shrink-0"
+                  className="bg-white backdrop-blur-sm text-black rounded-full p-2 shadow-xl transition-all duration-200 flex-shrink-0 border border-white/20"
                   aria-label="Previous categories"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -413,10 +413,10 @@ const ResponsiveMenuBar = () => {
                         }}
                       >
                         <motion.button
-                          className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 flex items-center whitespace-nowrap min-w-[180px] justify-center relative overflow-hidden ${
+                          className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 flex items-center whitespace-nowrap min-w-[180px] justify-center relative overflow-hidden backdrop-blur-sm ${
                             hoveredCategory === category.id
-                              ? 'bg-red-600 text-white shadow-lg transform scale-105'
-                              : 'hover:bg-red-600/20 hover:text-white border border-gray-600 hover:border-red-600'
+                              ? 'bg-white text-black shadow-xl transform scale-105 border border-white/50'
+                              : 'hover:bg-white/20 hover:text-white border border-white/30 hover:border-white/60 bg-white/10'
                           }`}
                           whileHover={{ 
                             scale: 1.05,
@@ -427,7 +427,7 @@ const ResponsiveMenuBar = () => {
                         >
                           {/* Background gradient effect */}
                           <motion.div
-                            className="absolute inset-0 bg-gradient-to-r from-red-600 to-red-700"
+                            className="absolute inset-0 bg-white"
                             initial={{ x: '-100%' }}
                             animate={{ 
                               x: hoveredCategory === category.id ? '0%' : '-100%'
@@ -435,7 +435,7 @@ const ResponsiveMenuBar = () => {
                             transition={{ duration: 0.3 }}
                           />
                           
-                          <span className="relative z-10 truncate max-w-[150px]">
+                          <span className="relative z-10 truncate max-w-[150px] font-semibold">
                             {category.name}
                           </span>
                           <motion.div
@@ -458,9 +458,9 @@ const ResponsiveMenuBar = () => {
               {selectedCategoryIndex < maxVisibleIndex && (
                 <motion.button
                   onClick={() => navigateToCategory('next')}
-                  className="bg-red-600 hover:bg-red-700 text-white rounded-full p-2 shadow-lg transition-all duration-200 flex-shrink-0"
+                  className="bg-white backdrop-blur-sm text-black rounded-full p-2 shadow-xl transition-all duration-200 flex-shrink-0 border border-white/20"
                   aria-label="Next categories"
-                  whileHover={{ scale: 1.1 }}
+                  whileHover={{ scale: 1.1}}
                   whileTap={{ scale: 0.9 }}
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -474,7 +474,7 @@ const ResponsiveMenuBar = () => {
             <div className="md:hidden">
               <motion.button
                 onClick={toggleMobileMenu}
-                className="bg-red-600 inline-flex items-center justify-center p-3 rounded-lg text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white shadow-lg"
+                className="bg-white/20 backdrop-blur-sm inline-flex items-center justify-center p-3 rounded-lg text-white hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white/50 shadow-xl border border-white/20"
                 aria-label="Open mobile menu"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -501,7 +501,7 @@ const ResponsiveMenuBar = () => {
                 {productsLoading ? (
                   <div className="flex items-center justify-center py-12">
                     <div className="animate-spin rounded-full h-8 w-8 border-2 border-red-500 border-t-transparent" />
-                    <span className="ml-3 text-gray-600 font-medium">
+                    <span className="ml-3 text-black font-medium">
                       Loading products...
                     </span>
                   </div>
@@ -513,7 +513,7 @@ const ResponsiveMenuBar = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 }}
                     >
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-black font-medium">
                         {products.length} product{products.length !== 1 ? 's' : ''} available
                       </p>
                     </motion.div>
@@ -533,7 +533,7 @@ const ResponsiveMenuBar = () => {
                             transition={{ delay: index * 0.05 }}
                             whileHover={{ y: -8, transition: { duration: 0.2 } }}
                           >
-                            <div className="relative overflow-hidden rounded-xl bg-gray-100 w-full h-40 mb-3 border border-gray-200 shadow-sm group-hover:shadow-lg transition-all duration-300">
+                            <div className="relative overflow-hidden rounded-xl bg-white w-full h-40 mb-3 border-2 border-gray-100 shadow-lg group-hover:shadow-xl group-hover:border-gray-300 transition-all duration-300">
                               <img
                                 src={
                                   product.imageList?.[0] ||
@@ -546,10 +546,13 @@ const ResponsiveMenuBar = () => {
                                 onError={handleImageError}
                                 loading="lazy"
                               />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                              <div className="absolute inset-0 bg-gradient-to-t from-gray-600/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                              <div className="absolute top-2 right-2 bg-black text-white text-xs px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                                View
+                              </div>
                             </div>
 
-                            <h3 className="text-sm font-medium text-gray-900 group-hover:text-red-600 transition-colors duration-200 text-center line-clamp-2 min-h-[2.5rem] leading-tight">
+                            <h3 className="text-sm font-semibold text-gray-800 group-hover:text-black transition-colors duration-200 text-center line-clamp-2 min-h-[2.5rem] leading-tight">
                               {product.name || product.title || "Unnamed Product"}
                             </h3>
                           </motion.div>
@@ -566,7 +569,7 @@ const ResponsiveMenuBar = () => {
                       >
                         <Link href={`/products?category=${hoveredCategory}`}>
                           <motion.button
-                            className="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-3 rounded-full hover:from-red-700 hover:to-red-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl"
+                            className="bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white px-8 py-3 rounded-full hover:from-red-700 hover:via-red-600 hover:to-red-700 transition-all duration-300 font-bold shadow-xl hover:shadow-2xl border border-red-400"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                           >
@@ -582,11 +585,11 @@ const ResponsiveMenuBar = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                   >
-                    <div className="text-gray-400 text-6xl mb-4">📦</div>
-                    <p className="text-gray-500 text-lg mb-2 font-medium">
+                    <div className="text-black text-6xl mb-4">📦</div>
+                    <p className="text-black text-lg mb-2 font-semibold">
                       No products found in this category
                     </p>
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-gray-700 text-sm">
                       Check back later for new additions
                     </p>
                   </motion.div>
@@ -602,7 +605,7 @@ const ResponsiveMenuBar = () => {
         {mobileMenuOpen && (
           <>
             <motion.div
-              className="fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden backdrop-blur-sm"
+              className="fixed inset-0 bg-black/60 z-50 md:hidden backdrop-blur-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -610,19 +613,19 @@ const ResponsiveMenuBar = () => {
             />
 
             <motion.div
-              className="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-50 md:hidden"
+              className="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-50 md:hidden border-l-4 border-red-500"
               variants={mobileMenuVariants}
               initial="hidden"
               animate="visible"
               exit="hidden"
             >
-              <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-red-600 to-red-700">
+              <div className="flex items-center justify-between p-6 border-b-2 border-red-100 bg-gradient-to-r from-red-600 via-red-500 to-red-600">
                 <h2 className="text-xl font-bold text-white">
                   Categories
                 </h2>
                 <motion.button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 rounded-lg text-white hover:bg-white/20 transition-colors duration-200"
+                  className="p-2 rounded-lg text-white hover:bg-white/20 transition-colors duration-200 backdrop-blur-sm"
                   aria-label="Close mobile menu"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -635,7 +638,7 @@ const ResponsiveMenuBar = () => {
                 {categories.map((category, index) => (
                   <motion.button
                     key={category.id}
-                    className="w-full text-left px-6 py-4 text-gray-900 hover:bg-red-50 hover:text-red-600 transition-all duration-200 border-b border-gray-100 flex items-center justify-between group"
+                    className="w-full text-left px-6 py-4 text-gray-900 hover:bg-gradient-to-r hover:from-red-50 hover:to-orange-50 hover:text-red-600 transition-all duration-200 border-b border-red-100 flex items-center justify-between group"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{
                       opacity: 1,
@@ -645,11 +648,11 @@ const ResponsiveMenuBar = () => {
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleMobileCategoryClick(category.id)}
                   >
-                    <span className="font-medium truncate group-hover:font-semibold transition-all duration-200">
+                    <span className="font-semibold truncate group-hover:font-bold transition-all duration-200">
                       {category.name}
                     </span>
                     <motion.div
-                      className="h-4 w-4 text-gray-400 group-hover:text-red-600 flex-shrink-0"
+                      className="h-4 w-4 text-red-400 group-hover:text-red-600 flex-shrink-0"
                       whileHover={{ x: 5 }}
                     >
                       <ChevronRight className="h-4 w-4" />
@@ -658,15 +661,15 @@ const ResponsiveMenuBar = () => {
                 ))}
                 
                 {categories.length === 0 && (
-                  <div className="px-6 py-12 text-center text-gray-500">
+                  <div className="px-6 py-12 text-center text-red-500">
                     <div className="text-4xl mb-4">📂</div>
-                    <p className="font-medium">No categories available</p>
-                    <p className="text-sm mt-1">Check back later</p>
+                    <p className="font-semibold">No categories available</p>
+                    <p className="text-sm mt-1 text-red-400">Check back later</p>
                   </div>
                 )}
                 
-                <div className="px-6 py-4 text-xs text-gray-500 border-t border-gray-200 mt-4 bg-gray-50">
-                  <p className="text-center font-medium">
+                <div className="px-6 py-4 text-xs text-red-600 border-t-2 border-red-100 mt-4 bg-gradient-to-r from-red-50 to-orange-50">
+                  <p className="text-center font-semibold">
                     Tap any category to view products
                   </p>
                 </div>

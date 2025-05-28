@@ -20,6 +20,7 @@ export const getRedbarSettings = async () => {
         openText: "WE ARE OPEN NOW",
         closedText: "WE ARE CLOSED NOW",
         phoneNumbers: ["011 2 687 687", "011 2 687 688", "077 7 687 687"],
+        isVisible: true, // New field to control visibility
       };
     }
   } catch (error) {
@@ -33,12 +34,14 @@ export const saveRedbarSettings = async ({
   openText,
   closedText,
   phoneNumbers,
+  isVisible,
 }) => {
   try {
     await setDoc(doc(db, "settings", "redbar"), {
       openText,
       closedText,
       phoneNumbers,
+      isVisible,
     });
     return true;
   } catch (error) {

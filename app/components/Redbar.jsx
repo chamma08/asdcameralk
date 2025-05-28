@@ -14,7 +14,8 @@ const Redbar = () => {
   const [openText, setOpenText] = useState("WE ARE OPEN NOW");
   const [closedText, setClosedText] = useState("WE ARE CLOSED NOW");
   const [isOpen, setIsOpen] = useState(true);
-  
+  const [isVisible, setIsVisible] = useState(true);
+  const [displayedPhoneIndex, setDisplayedPhoneIndex] = useState(0);
   
   // Use our settings hook to fetch data
   const { data } = useRedbarSettings();
@@ -29,6 +30,7 @@ const Redbar = () => {
         "011 2 687 688",
         "077 7 687 687"
       ]);
+      setIsVisible(data.isVisible !== undefined ? data.isVisible : true);
     }
   }, [data]);
   
@@ -65,6 +67,11 @@ const Redbar = () => {
     
     return () => clearInterval(interval);
   }, [phoneNumbers.length]);
+
+  // Don't render if not visible
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <motion.nav

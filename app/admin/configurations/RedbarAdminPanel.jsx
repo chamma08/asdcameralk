@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Save, AlertCircle } from "lucide-react";
+import { Save, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { saveRedbarSettings, useRedbarSettings } from "@/app/services/settings";
 
 
@@ -13,6 +13,7 @@ const RedbarAdminPanel = () => {
     "011 2 687 688",
     "077 7 687 687"
   ]);
+  const [isVisible, setIsVisible] = useState(true);
   const [newPhoneNumber, setNewPhoneNumber] = useState("");
   const [saveStatus, setSaveStatus] = useState(null);
   
@@ -27,6 +28,7 @@ const RedbarAdminPanel = () => {
         "011 2 687 688",
         "077 7 687 687"
       ]);
+      setIsVisible(data.isVisible !== undefined ? data.isVisible : true);
     }
   }, [data]);
 
@@ -36,7 +38,8 @@ const RedbarAdminPanel = () => {
       await saveRedbarSettings({
         openText,
         closedText,
-        phoneNumbers
+        phoneNumbers,
+        isVisible
       });
       await refresh(); // Refresh the SWR cache
       setSaveStatus("success");
@@ -46,6 +49,10 @@ const RedbarAdminPanel = () => {
       setSaveStatus("error");
       setTimeout(() => setSaveStatus(null), 3000);
     }
+  };
+
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible);
   };
 
   const addPhoneNumber = () => {
@@ -71,7 +78,31 @@ const RedbarAdminPanel = () => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto mt-4">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Redbar Admin Settings</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Redbar Admin Settings</h1>
+        
+        {/* Visibility Toggle Button */}
+        <button
+          onClick={toggleVisibility}
+          className={`flex items-center px-4 py-2 rounded-md text-white font-medium transition-colors ${
+            isVisible 
+              ? "bg-green-600 hover:bg-green-700" 
+              : "bg-red-600 hover:bg-red-700"
+          }`}
+        >
+          {isVisible ? (
+            <>
+              <Eye size={18} className="mr-2" />
+              Redbar Visible
+            </>
+          ) : (
+            <>
+              <EyeOff size={18} className="mr-2" />
+              Redbar Hidden
+            </>
+          )}
+        </button>
+      </div>
       
       <div className="space-y-6">
         {/* Open Text */}
@@ -84,6 +115,7 @@ const RedbarAdminPanel = () => {
             value={openText}
             onChange={(e) => setOpenText(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+            disabled={!isVisible}
           />
         </div>
         
@@ -97,6 +129,7 @@ const RedbarAdminPanel = () => {
             value={closedText}
             onChange={(e) => setClosedText(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+            disabled={!isVisible}
           />
         </div>
         
@@ -117,10 +150,12 @@ const RedbarAdminPanel = () => {
                     setPhoneNumbers(updatedPhoneNumbers);
                   }}
                   className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  disabled={!isVisible}
                 />
                 <button
                   onClick={() => removePhoneNumber(index)}
-                  className="ml-2 p-2 text-red-600 hover:text-red-800"
+                  className="ml-2 p-2 text-red-600 hover:text-red-800 disabled:opacity-50"
+                  disabled={!isVisible}
                 >
                   ✕
                 </button>
@@ -134,10 +169,12 @@ const RedbarAdminPanel = () => {
               onChange={(e) => setNewPhoneNumber(e.target.value)}
               placeholder="Add new phone number"
               className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              disabled={!isVisible}
             />
             <button
               onClick={addPhoneNumber}
-              className="ml-2 p-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+              className="ml-2 p-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
+              disabled={!isVisible}
             >
               +
             </button>
@@ -171,6 +208,19 @@ const RedbarAdminPanel = () => {
         <div className="mt-4 p-2 bg-red-100 text-red-700 rounded-md flex items-center">
           <AlertCircle size={16} className="mr-2" />
           Error saving settings. Please try again.
+        </div>
+      )}
+      
+      {/* Visibility Status Info */}
+      {!isVisible && (
+        <div className="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded-md border border-yellow-300">
+          <div className="flex items-center">
+            <EyeOff size={16} className="mr-2" />
+            <span className="font-medium">Redbar is currently hidden from users</span>
+          </div>
+          <p className="text-sm mt-1">
+            Other settings are disabled while the redbar is hidden. Toggle visibility to enable editing.
+          </p>
         </div>
       )}
     </div>
