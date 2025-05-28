@@ -416,7 +416,7 @@ const ResponsiveMenuBar = () => {
                           className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 flex items-center whitespace-nowrap min-w-[180px] justify-center relative overflow-hidden backdrop-blur-sm ${
                             hoveredCategory === category.id
                               ? 'bg-white text-black shadow-xl transform scale-105 border border-white/50'
-                              : 'hover:bg-white/20 hover:text-white border border-white/30 hover:border-white/60 bg-white/10'
+                              : 'hover:bg-black/80 hover:text-white border border-black/50 hover:border-black/80 bg-black/70 text-white'
                           }`}
                           whileHover={{ 
                             scale: 1.05,
