@@ -6,13 +6,19 @@ import { useBrands } from "@/lib/firestore/brands/read";
 import { deleteProduct } from "@/lib/firestore/products/write";
 import { Button, CircularProgress } from "@nextui-org/react";
 import { Edit2, Trash2, Search, Filter, X } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useMemo } from "react";
 import toast from "react-hot-toast";
 
 export default function ListView() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  // Get current page from URL, default to 1
+  const urlPage = parseInt(searchParams.get('page')) || 1;
+  
   const [pageLimit, setPageLimit] = useState(10);
-  const [lastSnapDocList, setLastSnapDocList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(urlPage);
   
   // Filter and search states
   const [searchTerm, setSearchTerm] = useState('');
@@ -21,16 +27,28 @@ export default function ListView() {
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('newest');
 
+  // Sync URL page with component state on mount
   useEffect(() => {
-    setLastSnapDocList([]);
-  }, [pageLimit]);
+    setCurrentPage(urlPage);
+  }, [urlPage]);
+
+  // Update URL when page changes
+  const updateURL = (page) => {
+    const params = new URLSearchParams(searchParams);
+    if (page === 1) {
+      params.delete('page');
+    } else {
+      params.set('page', page.toString());
+    }
+    const newUrl = params.toString() ? `?${params.toString()}` : '';
+    router.replace(`/admin/products${newUrl}`, { scroll: false });
+  };
 
   // Fetch all data for filtering
   const {
     data: allProducts,
     error,
     isLoading,
-    lastSnapDoc,
   } = useProducts({
     pageLimit: 100, // Get more products for better filtering
     lastSnapDoc: null, // Don't use pagination when filtering
@@ -83,26 +101,35 @@ export default function ListView() {
     return filtered;
   }, [allProducts, searchTerm, selectedCategories, selectedBrands, sortBy]);
 
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredAndSortedProducts.length / pageLimit);
+
   // Paginate the filtered results
   const paginatedProducts = useMemo(() => {
-    const startIndex = lastSnapDocList.length * pageLimit;
+    const startIndex = (currentPage - 1) * pageLimit;
     const endIndex = startIndex + pageLimit;
     return filteredAndSortedProducts.slice(startIndex, endIndex);
-  }, [filteredAndSortedProducts, lastSnapDocList.length, pageLimit]);
+  }, [filteredAndSortedProducts, currentPage, pageLimit]);
 
   const handleNextPage = () => {
-    const startIndex = (lastSnapDocList.length + 1) * pageLimit;
-    if (startIndex < filteredAndSortedProducts.length) {
-      let newStack = [...lastSnapDocList];
-      newStack.push(true); // Just a placeholder since we're using array slicing
-      setLastSnapDocList(newStack);
+    if (currentPage < totalPages) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      updateURL(nextPage);
     }
   };
 
   const handlePrePage = () => {
-    let newStack = [...lastSnapDocList];
-    newStack.pop();
-    setLastSnapDocList(newStack);
+    if (currentPage > 1) {
+      const prevPage = currentPage - 1;
+      setCurrentPage(prevPage);
+      updateURL(prevPage);
+    }
+  };
+
+  const resetPagination = () => {
+    setCurrentPage(1);
+    updateURL(1);
   };
 
   const toggleCategory = (categoryId) => {
@@ -111,7 +138,7 @@ export default function ListView() {
         ? prev.filter(id => id !== categoryId)
         : [...prev, categoryId]
     );
-    setLastSnapDocList([]); // Reset pagination when filters change
+    resetPagination(); // Reset to page 1 when filters change
   };
 
   const toggleBrand = (brandId) => {
@@ -120,14 +147,29 @@ export default function ListView() {
         ? prev.filter(b => b !== brandId)
         : [...prev, brandId]
     );
-    setLastSnapDocList([]); // Reset pagination when filters change
+    resetPagination(); // Reset to page 1 when filters change
   };
 
   const clearFilters = () => {
     setSelectedCategories([]);
     setSelectedBrands([]);
     setSearchTerm('');
-    setLastSnapDocList([]);
+    resetPagination();
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    resetPagination(); // Reset to page 1 when search changes
+  };
+
+  const handleSortChange = (e) => {
+    setSortBy(e.target.value);
+    resetPagination(); // Reset to page 1 when sort changes
+  };
+
+  const handlePageLimitChange = (e) => {
+    setPageLimit(Number(e.target.value));
+    resetPagination(); // Reset to page 1 when page limit changes
   };
 
   const hasActiveFilters = searchTerm || selectedCategories.length > 0 || selectedBrands.length > 0;
@@ -156,10 +198,7 @@ export default function ListView() {
               type="text"
               placeholder="Search products..."
               value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setLastSnapDocList([]);
-              }}
+              onChange={handleSearchChange}
               className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
             />
           </div>
@@ -181,7 +220,7 @@ export default function ListView() {
 
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
+              onChange={handleSortChange}
               className="px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
             >
               <option value="newest">Newest First</option>
@@ -327,9 +366,10 @@ export default function ListView() {
               ) : (
                 paginatedProducts.map((item, index) => (
                   <Row
-                    index={index + lastSnapDocList.length * pageLimit}
+                    index={index + (currentPage - 1) * pageLimit}
                     item={item}
                     key={item?.id}
+                    currentPage={currentPage}
                   />
                 ))
               )}
@@ -341,7 +381,7 @@ export default function ListView() {
       {/* Pagination */}
       <div className="flex justify-between items-center text-sm py-3 bg-white px-4 rounded-xl shadow-sm">
         <Button
-          isDisabled={isLoading || lastSnapDocList?.length === 0}
+          isDisabled={isLoading || currentPage === 1}
           onClick={handlePrePage}
           size="sm"
           variant="bordered"
@@ -352,10 +392,7 @@ export default function ListView() {
         <div className="flex items-center gap-4">
           <select
             value={pageLimit}
-            onChange={(e) => {
-              setPageLimit(Number(e.target.value));
-              setLastSnapDocList([]);
-            }}
+            onChange={handlePageLimitChange}
             className="px-3 py-1 rounded border border-gray-200 text-sm"
             name="perpage"
             id="perpage"
@@ -368,15 +405,12 @@ export default function ListView() {
           </select>
           
           <span className="text-gray-600">
-            Page {lastSnapDocList.length + 1} of {Math.ceil(filteredAndSortedProducts.length / pageLimit)}
+            Page {currentPage} of {totalPages || 1}
           </span>
         </div>
 
         <Button
-          isDisabled={
-            isLoading || 
-            (lastSnapDocList.length + 1) * pageLimit >= filteredAndSortedProducts.length
-          }
+          isDisabled={isLoading || currentPage >= totalPages}
           onClick={handleNextPage}
           size="sm"
           variant="bordered"
@@ -388,7 +422,7 @@ export default function ListView() {
   );
 }
 
-function Row({ item, index }) {
+function Row({ item, index, currentPage }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
@@ -406,7 +440,7 @@ function Row({ item, index }) {
   };
 
   const handleUpdate = () => {
-    router.push(`/admin/products/form?id=${item?.id}`);
+    router.push(`/admin/products/form?id=${item?.id}&page=${currentPage}`);
   };
 
   return (

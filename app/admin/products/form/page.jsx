@@ -44,26 +44,6 @@ const ImageUploadGuidelines = () => {
               <li className="text-gray-500">• Clean background preferred</li>
             </ul>
           </div>
-
-          {/* Gallery Images Guidelines */}
-          {/* <div className="space-y-2">
-            <h4 className="font-medium text-sm text-purple-600 flex items-center gap-1">
-              🎞️ Gallery Images
-            </h4>
-            <ul className="text-xs space-y-1 text-gray-600">
-              <li className="flex items-center gap-1">
-                <Chip size="sm" color="success" variant="dot">Up to 8 images</Chip>
-              </li>
-              <li className="flex items-center gap-1">
-                <Chip size="sm" color="primary" variant="dot">Square format preferred</Chip>
-              </li>
-              <li className="flex items-center gap-1">
-                <Chip size="sm" color="warning" variant="dot">Each max 3MB</Chip>
-              </li>
-              <li className="text-gray-500">• Show different angles</li>
-              <li className="text-gray-500">• Include detail shots</li>
-            </ul>
-          </div> */}
         </div>
 
         {/* Pro Tips */}
@@ -110,6 +90,7 @@ export default function Page() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const id = searchParams.get("id");
+  const returnPage = searchParams.get("page"); // Get the page parameter
 
   const fetchData = async () => {
     try {
@@ -170,7 +151,12 @@ export default function Page() {
       setFeatureImage(null);
       setImageList([]);
       toast.success("Product is successfully Updated!");
-      router.push(`/admin/products`);
+      
+      // Redirect back to the specific page where the product was listed
+      const redirectUrl = returnPage 
+        ? `/admin/products?page=${returnPage}` 
+        : `/admin/products`;
+      router.push(redirectUrl);
     } catch (error) {
       console.log(error?.message);
       toast.error(error?.message);
