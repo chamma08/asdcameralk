@@ -1,18 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import AuthContextProvider from "@/context/AuthContext";
+import AuthContextProvider from "@/context/AuthContext"; 
 import { useRouter } from "next/navigation";
 import { algoliasearch } from "algoliasearch";
-import { Menu, Search, X } from "lucide-react";
+import { Search } from "lucide-react"; 
+import LogoutButton from "./LogoutButton"; 
+import HeaderClientButtons from "./HeaderClientButtons"; // Added
+import AdminButton from "./AdminButton"; // Added
+import { UserCircle2 } from "lucide-react"; // Added for My Account icon
+
 
 export default function NavBar() {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const mobileMenuRef = useRef(null);
+  
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -20,52 +23,31 @@ export default function NavBar() {
   const router = useRouter();
   const suggestionsRef = useRef(null);
   const [viewportWidth, setViewportWidth] = useState(0);
-  const pathname = usePathname(); // Get current path
-
-  const menuList = [
-    { name: "Home", link: "/" },
-    { name: "About Us", link: "/about" },
-    { name: "Blog", link: "/blog" },
-    { name: "Our Clients", link: "/clients" },
-    { name: "Promotions", link: "/promotions" },
-    { name: "Contact Us", link: "/contact-us" },
-  ];
-
-  // Track viewport width for responsive behavior
+  
   useEffect(() => {
     const handleResize = () => {
       setViewportWidth(window.innerWidth);
-
-      // Auto-close mobile menu and search on resize to desktop
       if (window.innerWidth >= 768) {
-        setShowMobileMenu(false);
         setShowMobileSearch(false);
       }
     };
-
-    // Set initial width
-    handleResize();
-
+    handleResize(); // Set initial width
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Use searchForHits to match the page.jsx implementation
   const getSuggestions = async (text) => {
     if (!text || text.trim() === "") {
       setSuggestions([]);
       return;
     }
-
     setIsLoading(true);
     setShowSuggestions(true);
-
     try {
       const client = algoliasearch(
         process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
         process.env.NEXT_PUBLIC_ALGOLIA_APP_KEY
       );
-
       const search = await client.searchForHits({
         requests: [
           {
@@ -75,7 +57,6 @@ export default function NavBar() {
           },
         ],
       });
-
       const hits = search.results[0]?.hits || [];
       setSuggestions(hits);
     } catch (error) {
@@ -86,24 +67,20 @@ export default function NavBar() {
     }
   };
 
-  // Debounce user input
   useEffect(() => {
     if (!query) {
       setSuggestions([]);
       setShowSuggestions(false);
       return;
     }
-
     const timeoutId = setTimeout(() => {
       if (query.trim() !== "") {
         getSuggestions(query);
       }
     }, 300);
-
     return () => clearTimeout(timeoutId);
   }, [query]);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -113,42 +90,25 @@ export default function NavBar() {
         setShowSuggestions(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Handle escape key to close mobile search and menu
+  // Handle escape key to close mobile search and suggestions (mobile menu part removed)
   useEffect(() => {
     const handleEscKey = (event) => {
       if (event.key === "Escape") {
         if (showMobileSearch) setShowMobileSearch(false);
-        if (showMobileMenu) setShowMobileMenu(false);
+        // if (showMobileMenu) setShowMobileMenu(false); // Removed
         if (showSuggestions) setShowSuggestions(false);
       }
     };
-
     document.addEventListener("keydown", handleEscKey);
+    // Removed showMobileMenu from dependencies
     return () => document.removeEventListener("keydown", handleEscKey);
-  }, [showMobileSearch, showMobileMenu, showSuggestions]);
+  }, [showMobileSearch, showSuggestions]);
 
-  // Close mobile menu on outside click
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        mobileMenuRef.current &&
-        !mobileMenuRef.current.contains(event.target)
-      ) {
-        setShowMobileMenu(false);
-      }
-    };
-
-    if (showMobileMenu) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () =>
-        document.removeEventListener("mousedown", handleClickOutside);
-    }
-  }, [showMobileMenu]);
+  // Removed useEffect for mobileMenuRef (outside click for menuList's mobile menu)
 
   const handleSubmit = (e) => {
     e?.preventDefault();
@@ -168,54 +128,20 @@ export default function NavBar() {
     setShowMobileSearch(false);
   };
 
-  // Function to check if a link is active
-  const isActiveLink = (link) => {
-    if (link === "/") {
-      return pathname === "/";
-    }
-    return pathname.startsWith(link);
-  };
-
+  
 
   return (
     <motion.nav
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       transition={{ delay: 0.2, duration: 0.8 }}
-      className="sticky top-0 z-50 bg-white bg-opacity-65 backdrop-blur-2xl py-2 sm:py-3 px-3 sm:px-4 sm:justify-center  md:py-4 md:px-6 lg:px-16 border-b flex items-center justify-between gap-2 md:gap-4 lg:gap-6 transition-all duration-300"
+      className="sticky top-0 z-50 bg-white bg-opacity-65 h-12 backdrop-blur-2xl py-2 sm:py-3 px-3 sm:px-4 md:py-4 md:px-6 lg:px-16 border-b flex items-center justify-between gap-2 md:gap-4 lg:gap-6 transition-all duration-300"
+      // Changed justify-between to justify-center and added relative positioning
     >
-      {/* Logo and Phone Number Section */}
       
-
-      {/* Desktop Navigation */}
-      <div className="hidden md:flex gap-1 lg:gap-2 items-center font-semibold bg-gray-100 rounded-full">
-        {menuList.map((item, index) => (
-          <Link href={item.link} key={index}>
-            <button
-              className={`text-xs lg:text-sm px-2 lg:px-4 py-2 rounded-full transition-colors ${
-                isActiveLink(item.link)
-                  ? "bg-red-600 text-white rounded-full"
-                  : "hover:bg-red-200 hover:rounded-full"
-              }`}
-            >
-              {item.name}
-            </button>
-          </Link>
-        ))}
-      </div>
-
-      {/* Mobile Menu Button */}
-      <button
-        className="md:hidden flex h-8 w-8 justify-center items-center rounded-full hover:bg-gray-50 transition-colors z-10"
-        onClick={() => setShowMobileMenu(!showMobileMenu)}
-        aria-label="Menu"
-      >
-        {showMobileMenu ? <X size={16} /> : <Menu size={16} />}
-      </button>
-
-      {/* Search & Suggestions - Hidden on xs screens, visible from sm up */}
+      {/* Centered Search Bar Container */}
       <div
-        className="relative flex-grow mx-2 sm:mx-4 max-w-xs sm:max-w-sm lg:max-w-md hidden sm:block"
+        className="absolute left-1/2 transform -translate-x-1/2 w-full max-w-md lg:max-w-[600px] px-16 sm:px-20 hidden sm:block" // Changed: max-w-xs sm:max-w-sm lg:max-w-md  TO  max-w-md lg:max-w-lg
         ref={suggestionsRef}
       >
         <form onSubmit={handleSubmit} className="relative flex items-center">
@@ -257,7 +183,6 @@ export default function NavBar() {
             <div className="py-1.5 px-3 bg-gray-50 text-xs text-gray-700 font-medium border-b">
               Product Suggestions
             </div>
-
             {isLoading ? (
               <div className="p-3 text-center">
                 <div className="w-5 h-5 border-2 border-gray-300 border-t-red-600 rounded-full animate-spin mx-auto"></div>
@@ -305,58 +230,51 @@ export default function NavBar() {
         )}
       </div>
 
-      {/* Mobile Search Button */}
-      <button
-        className="sm:hidden flex h-8 w-8 justify-center items-center rounded-full hover:bg-gray-50 transition-colors z-10"
-        onClick={() => setShowMobileSearch(!showMobileSearch)}
-        aria-label="Search"
-      >
-        <Search size={16} />
-      </button>
-
-     
-
-      {/* Mobile Menu Dropdown - Improved animation and styling */}
-      {showMobileMenu && (
-        <motion.div
-          ref={mobileMenuRef}
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2 }}
-          className="absolute left-0 right-0 top-full bg-white border-b shadow-lg z-40 md:hidden"
+      {/* Mobile Search Button - Positioned on the left */}
+      <div className="absolute left-3 sm:left-4 md:left-6 lg:left-16 sm:hidden">
+        <button
+          className="flex h-8 w-8 justify-center items-center rounded-full hover:bg-gray-50 transition-colors z-10"
+          onClick={() => setShowMobileSearch(!showMobileSearch)}
+          aria-label="Search"
         >
+          <Search size={16} />
+        </button>
+      </div>
+      
+      {/* User Account Buttons - Positioned on the right */}
+      <div className="absolute right-3 sm:right-4 md:right-6 lg:right-16 flex items-center gap-1 z-10 shrink-0">
+          <AuthContextProvider>
+            <AdminButton />
+          </AuthContextProvider>
+          <AuthContextProvider>
+            <HeaderClientButtons />
+          </AuthContextProvider>
+          <Link href={`/login`}>
+            <button
+              title="My Account"
+              className="h-8 w-8 flex justify-center items-center rounded-full hover:bg-gray-50 transition-colors"
+            >
+              <UserCircle2 size={16} />
+            </button>
+          </Link>
+          <AuthContextProvider>
+            <LogoutButton />
+          </AuthContextProvider>
+        </div>
 
-          <div className="py-2 px-4">
-            {menuList.map((item, index) => (
-              <Link
-                href={item.link}
-                key={index}
-                onClick={() => setShowMobileMenu(false)}
-              >
-                <div
-                  className={`py-2.5 border-b last:border-0 text-sm font-medium px-3 rounded transition-colors ${
-                    isActiveLink(item.link)
-                      ? "bg-red-100 text-red-700"
-                      : "hover:bg-gray-50"
-                  }`}
-                >
-                  {item.name}
-                </div>
-              </Link>
-            ))}
-          </div>
-        </motion.div>
-      )}
 
-      {/* Full-width Mobile Search - Only shows when activated */}
+      {/* Removed Mobile Menu Dropdown (for menuList) */}
+
+      {/* Full-width Mobile Search - Kept */}
       {showMobileSearch && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
-          className="absolute left-0 right-0 top-full bg-white border-b py-3 px-4 sm:hidden z-40"
+          // Adjusted z-index, ensure it appears correctly
+          className="absolute left-0 right-0 top-full bg-white border-b py-3 px-4 sm:hidden z-30" // z-30, potentially below Header's mobile menu if both open
         >
-          <div className="relative" ref={suggestionsRef}>
+          <div className="relative" ref={suggestionsRef}> {/* Re-using suggestionsRef here, ensure it's okay or use a different one if mobile search needs distinct ref */}
             <form
               onSubmit={(e) => {
                 handleSubmit(e);
@@ -398,9 +316,10 @@ export default function NavBar() {
               </button>
             </form>
 
-            {showSuggestions && (
+            {showSuggestions && ( // This is the same suggestions dropdown logic as desktop
               <div className="absolute top-full left-0 w-full mt-2 bg-white border rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
-                <div className="py-1.5 px-3 bg-gray-50 text-xs text-gray-700 font-medium border-b">
+                {/* ... suggestions rendering ... (same as desktop) */}
+                 <div className="py-1.5 px-3 bg-gray-50 text-xs text-gray-700 font-medium border-b">
                   Product Suggestions
                 </div>
 
@@ -415,7 +334,7 @@ export default function NavBar() {
                       className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center border-b last:border-0"
                       onClick={() => {
                         handleSuggestionClick(item);
-                        setShowMobileSearch(false);
+                        setShowMobileSearch(false); // Close mobile search as well
                       }}
                     >
                       {item.featureImageURL ? (

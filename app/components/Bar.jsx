@@ -139,7 +139,7 @@ const ResponsiveMenuBar = () => {
         );
       }
     },
-    [selectedCategoryIndex, maxVisibleIndex, categoriesPerView] // Added categoriesPerView
+    [selectedCategoryIndex, maxVisibleIndex, categoriesPerView]
   );
 
   const handleMouseLeave = useCallback(() => {
@@ -292,23 +292,32 @@ const ResponsiveMenuBar = () => {
     [selectedCategoryIndex, maxVisibleIndex]
   );
 
-  // New navigation functions for double arrows
   const navigateToStart = useCallback(() => {
     setSelectedCategoryIndex(0);
-  }, []); // setSelectedCategoryIndex is stable
+  }, []);
 
   const navigateToEnd = useCallback(() => {
     setSelectedCategoryIndex(maxVisibleIndex);
-  }, [maxVisibleIndex]); // setSelectedCategoryIndex is stable
+  }, [maxVisibleIndex]);
 
   const handleImageError = useCallback((e) => {
     e.target.src =
       "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTUwIiBmb250LWZhbWlseT0iYXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM5Q0E0QUYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIwLjNlbSI+Tm8gSW1hZ2U8L3RleHQ+Cjwvc3ZnPgo=";
   }, []);
 
+  
+
+  const navBarHeightStyle = 'var(--default-navbar-height, 47px)';
+ 
+  const backdropTopStyle = `calc(${navBarHeightStyle} + 64px)`;
+
+
   if (categoriesLoading) {
     return (
-      <div className="w-full h-12 bg-gradient-to-r from-red-600 via-red-500 to-red-600 flex items-center justify-center">
+      <div 
+        className="sticky w-full h-12 bg-gradient-to-r from-red-600 via-red-500 to-red-600 flex items-center justify-center z-35"
+        style={{ top: navBarHeightStyle }}
+      >
         <div className="animate-spin rounded-full h-6 w-6 border-2 border-white/30 border-t-white" />
       </div>
     );
@@ -316,7 +325,10 @@ const ResponsiveMenuBar = () => {
 
   if (categoriesError) {
     return (
-      <div className="w-full h-12 bg-gradient-to-r from-red-600 via-red-500 to-red-600 flex items-center justify-center">
+      <div 
+        className="sticky w-full h-12 bg-gradient-to-r from-red-600 via-red-500 to-red-600 flex items-center justify-center z-35"
+        style={{ top: navBarHeightStyle }}
+      >
         <div className="text-white/90 text-xs font-medium">
           Error loading categories
         </div>
@@ -326,19 +338,24 @@ const ResponsiveMenuBar = () => {
 
   if (!categories.length) {
     return (
-      <div className="w-full h-12 bg-gradient-to-r from-red-600 via-red-500 to-red-600 flex items-center justify-center">
+      <div 
+        className="sticky w-full h-12 bg-gradient-to-r from-red-600 via-red-500 to-red-600 flex items-center justify-center z-35"
+        style={{ top: navBarHeightStyle }}
+      >
         <div className="text-white/70 text-xs">No categories available</div>
       </div>
     );
   }
 
   return (
-    <div className="relative">
-      <nav className="bg-[#FF0000] text-white shadow-2xl relative z-50 border-b-2 border-red-700/50">
+    <div 
+      className="sticky z-40"
+      style={{ top: navBarHeightStyle }} 
+    >
+      <nav className="bg-[#FF0000] text-white shadow-2xl relative z-40 border-b-2 border-red-700/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center h-16">
             <div className="hidden md:flex items-center w-full max-w-6xl gap-4">
-              {/* Go to Start Button (ChevronsLeft) */}
               {selectedCategoryIndex > 0 && (
                 <motion.button
                   onClick={navigateToStart}
@@ -353,7 +370,6 @@ const ResponsiveMenuBar = () => {
                 </motion.button>
               )}
 
-              {/* Left Navigation Arrow (ChevronLeft) */}
               {selectedCategoryIndex > 0 && (
                 <motion.button
                   onClick={() => navigateToCategory("prev")}
@@ -453,7 +469,6 @@ const ResponsiveMenuBar = () => {
                 </motion.div>
               </div>
 
-              {/* Right Navigation Arrow (ChevronRight) */}
               {selectedCategoryIndex < maxVisibleIndex && (
                 <motion.button
                   onClick={() => navigateToCategory("next")}
@@ -468,7 +483,6 @@ const ResponsiveMenuBar = () => {
                 </motion.button>
               )}
 
-              {/* Go to End Button (ChevronsRight) */}
               {selectedCategoryIndex < maxVisibleIndex && (
                 <motion.button
                   onClick={navigateToEnd}
@@ -689,7 +703,10 @@ const ResponsiveMenuBar = () => {
       </AnimatePresence>
 
       {hoveredCategory && (
-        <div className="fixed inset-0 z-30" style={{ top: "64px" }} />
+        <div 
+          className="fixed inset-0 z-30" 
+          style={{ top: backdropTopStyle }} 
+        />
       )}
     </div>
   );

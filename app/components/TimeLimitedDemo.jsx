@@ -121,11 +121,6 @@ const TimeLimitedDemo = ({ children, demoStartDate, demoLengthDays = 14 }) => {
         </div>
       )}
 
-      {/* Demo Watermark */}
-      <div className="fixed top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold z-40 shadow-lg opacity-90">
-        DEMO VERSION
-      </div>
-
       {/* Adjust top margin if warning is shown */}
       <div className={showWarning ? 'mt-10' : ''}>
         {children}
