@@ -24,9 +24,11 @@ export default function NavBar() {
 
   const menuList = [
     { name: "Home", link: "/" },
-    { name: "About", link: "/about" },
-    { name: "Contact", link: "/contact-us" },
-    { name: "Clients", link: "/clients" },
+    { name: "About Us", link: "/about" },
+    { name: "Blog", link: "/blog" },
+    { name: "Our Clients", link: "/clients" },
+    { name: "Promotions", link: "/promotions" },
+    { name: "Contact Us", link: "/contact-us" },
   ];
 
   // Track viewport width for responsive behavior
