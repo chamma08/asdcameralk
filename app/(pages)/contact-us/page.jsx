@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaPhone, FaMapMarkerAlt, FaFacebook, FaInstagram, FaGoogle } from 'react-icons/fa';
+import { FaPhone, FaMapMarkerAlt, FaFacebook, FaInstagram, FaGoogle, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 import { MdEmail, MdLocationOn, MdSend } from 'react-icons/md';
 import { useFooterSettings } from '@/app/services/settings';
 import { FaLinkedin, FaTiktok, FaX, FaYoutube } from 'react-icons/fa6';
+import { submitContactForm } from '@/app/services/contactForm';
 
 const ContactPage = () => {
   const [activeLocation, setActiveLocation] = useState('JaEla');
@@ -14,6 +15,12 @@ const ContactPage = () => {
     email: '',
     subject: '',
     message: ''
+  });
+  const [formStatus, setFormStatus] = useState({
+    isSubmitting: false,
+    submitted: false,
+    error: null,
+    success: false
   });
 
   // Default data (fallback)
@@ -50,12 +57,69 @@ const ContactPage = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
+    
+    // Clear any previous errors when user starts typing
+    if (formStatus.error) {
+      setFormStatus(prev => ({ ...prev, error: null }));
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Add form submission logic here
+    
+    // Set submitting state
+    setFormStatus({
+      isSubmitting: true,
+      submitted: false,
+      error: null,
+      success: false
+    });
+
+    try {
+      // Submit form to Firebase
+      const result = await submitContactForm(formData);
+
+      if (result.success) {
+        // Success state
+        setFormStatus({
+          isSubmitting: false,
+          submitted: true,
+          error: null,
+          success: true
+        });
+
+        // Reset form data
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: ''
+        });
+
+        // Auto-hide success message after 5 seconds
+        setTimeout(() => {
+          setFormStatus(prev => ({ ...prev, submitted: false, success: false }));
+        }, 5000);
+
+      } else {
+        // Error state
+        setFormStatus({
+          isSubmitting: false,
+          submitted: false,
+          error: result.error,
+          success: false
+        });
+      }
+
+    } catch (error) {
+      // Unexpected error
+      setFormStatus({
+        isSubmitting: false,
+        submitted: false,
+        error: 'An unexpected error occurred. Please try again.',
+        success: false
+      });
+    }
   };
 
   const containerVariants = {
@@ -376,6 +440,40 @@ const ContactPage = () => {
                 </p>
               </motion.div>
 
+              {/* Success Message */}
+              {formStatus.submitted && formStatus.success && (
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6"
+                >
+                  <div className="flex items-center gap-3">
+                    <FaCheckCircle className="text-green-500 text-xl" />
+                    <div>
+                      <h4 className="text-green-700 font-semibold">Message Sent Successfully!</h4>
+                      <p className="text-green-600 text-sm">We'll get back to you as soon as possible.</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Error Message */}
+              {formStatus.error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6"
+                >
+                  <div className="flex items-center gap-3">
+                    <FaExclamationCircle className="text-red-500 text-xl" />
+                    <div>
+                      <h4 className="text-red-700 font-semibold">Error</h4>
+                      <p className="text-red-600 text-sm">{formStatus.error}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
               <motion.form 
                 onSubmit={handleSubmit}
                 variants={containerVariants}
@@ -392,6 +490,7 @@ const ContactPage = () => {
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all"
                       placeholder="Your Name"
                       required
+                      disabled={formStatus.isSubmitting}
                     />
                   </div>
                   <div>
@@ -404,6 +503,7 @@ const ContactPage = () => {
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all"
                       placeholder="your@email.com"
                       required
+                      disabled={formStatus.isSubmitting}
                     />
                   </div>
                 </motion.div>
@@ -418,6 +518,7 @@ const ContactPage = () => {
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all"
                     placeholder="What's this about?"
                     required
+                    disabled={formStatus.isSubmitting}
                   />
                 </motion.div>
 
@@ -431,18 +532,33 @@ const ContactPage = () => {
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all resize-none"
                     placeholder="Tell us more about your needs..."
                     required
+                    disabled={formStatus.isSubmitting}
                   ></textarea>
                 </motion.div>
 
                 <motion.div variants={itemVariants}>
                   <motion.button
                     type="submit"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-4 px-6 rounded-xl transition-colors duration-300 flex items-center justify-center gap-2 shadow-lg"
+                    whileHover={!formStatus.isSubmitting ? { scale: 1.02 } : {}}
+                    whileTap={!formStatus.isSubmitting ? { scale: 0.98 } : {}}
+                    disabled={formStatus.isSubmitting}
+                    className={`w-full font-semibold py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg ${
+                      formStatus.isSubmitting
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-red-500 hover:bg-red-600 text-white'
+                    }`}
                   >
-                    <MdSend className="text-xl" />
-                    Send Message
+                    {formStatus.isSubmitting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <MdSend className="text-xl" />
+                        Send Message
+                      </>
+                    )}
                   </motion.button>
                 </motion.div>
               </motion.form>

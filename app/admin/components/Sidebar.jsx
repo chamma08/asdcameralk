@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   LibraryBig,
   LogOut,
+  Mail,
   PackageOpen,
   Share,
   ShieldCheck,
@@ -60,6 +61,11 @@ export default function Sidebar() {
       name: "Client Logos",
       link: "/admin/client-logos",
       icon: <UserCog className="h-5 w-5" />,
+    },
+    {
+      name: "Client Messages",
+      link: "/admin/client-messages",
+      icon: <Mail className="h-5 w-5" />,
     },
     {
       name: "Brands",
