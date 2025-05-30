@@ -559,7 +559,7 @@ const ResponsiveMenuBar = () => {
                             transition={{ delay: index * 0.05 }}
                             whileHover={{ y: -6, transition: { duration: 0.2 } }}
                           >
-                            <div className="relative overflow-hidden rounded-lg bg-white w-full h-32 mb-2 border border-gray-100 shadow-md group-hover:shadow-lg group-hover:border-gray-200 transition-all duration-300">
+                            <div className="relative overflow-hidden bg-white w-full h-40 mb-2 border p-1 bg-center bg-cover border-gray-100 shadow-md group-hover:shadow-lg group-hover:border-gray-200 transition-all duration-300">
                               <img
                                 src={
                                   product.imageList?.[0] ||

@@ -97,12 +97,12 @@ const Redbar = () => {
         >
           {isOpen ? (
             <>
-              <CheckCircle size={16} className="mr-1" />
+              {/* <CheckCircle size={16} className="mr-1" /> */}
               <span className="font-medium">{openText}</span>
             </>
           ) : (
             <>
-              <XCircle size={16} className="mr-1" />
+              {/* <XCircle size={16} className="mr-1" /> */}
               <span className="font-medium">{closedText}</span>
             </>
           )}
