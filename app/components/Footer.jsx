@@ -1,7 +1,7 @@
 "use client";
 
 import { FaGoogle, FaPhone } from "react-icons/fa";
-import { FaFacebook, FaInstagram } from "react-icons/fa6";
+import { FaFacebook, FaInstagram, FaLinkedin, FaTiktok, FaX, FaYoutube } from "react-icons/fa6";
 import { MdEmail, MdLocationOn } from "react-icons/md";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -237,6 +237,10 @@ export default function Footer() {
                 <FaFacebook className="text-3xl hover:scale-105 duration-300" />
                 <FaInstagram className="text-3xl hover:scale-105 duration-300" />
                 <FaGoogle className="text-3xl hover:scale-105 duration-300" />
+                <FaYoutube className="text-3xl hover:scale-105 duration-300" />
+                <FaTiktok className="text-3xl hover:scale-105 duration-300" />
+                <FaX className="text-3xl hover:scale-105 duration-300" />
+                <FaLinkedin className="text-3xl hover:scale-105 duration-300" />
               </div>
               <div className="space-y-2">
                 <p>Payment Methods</p>
