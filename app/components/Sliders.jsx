@@ -43,14 +43,29 @@ export const dynamic = "force-dynamic";
 
 export default function FeaturedProductSlider({ featuredProducts }) {
   const [fallbackImages, setFallbackImages] = useState([]);
+  const [activeBackground, setActiveBackground] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Fetch images from Firebase when no featured products
+  // Fetch active background image and fallback images
   useEffect(() => {
-    const fetchImages = async () => {
-      if (!featuredProducts || featuredProducts.length === 0) {
-        setLoading(true);
-        try {
+    const fetchBackgroundAndImages = async () => {
+      setLoading(true);
+      try {
+        // Fetch active background image
+        const bgImagesSnapshot = await getDocs(collection(db, "bgImages"));
+        let activeBg = null;
+        
+        bgImagesSnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.isActive) {
+            activeBg = data;
+          }
+        });
+        
+        setActiveBackground(activeBg);
+
+        // Fetch fallback images only if no featured products
+        if (!featuredProducts || featuredProducts.length === 0) {
           const imagesSnapshot = await getDocs(collection(db, "images"));
           const images = [];
           imagesSnapshot.forEach((doc) => {
@@ -64,32 +79,53 @@ export default function FeaturedProductSlider({ featuredProducts }) {
                 data.description || "Discover amazing products and deals",
             });
           });
-          setFallbackImages(images);
-        } catch (error) {
-          console.error("Error fetching images:", error);
-          // Set default images if Firebase fetch fails
-          setFallbackImages([
-            {
-              id: 1,
-              imageURL: "/images/slider-1.jpg",
-              name: "Default Image 1",
-              title: "Welcome to Our Store",
-              description: "Discover amazing products",
-            },
-            {
-              id: 2,
-              imageURL: "/images/slider-2.jpg",
-              name: "Default Image 2",
-              title: "Quality Products",
-              description: "Find what you're looking for",
-            },
-          ]);
+          
+          if (images.length === 0) {
+            // Set default images if no images found
+            setFallbackImages([
+              {
+                id: 1,
+                imageURL: "/images/slider-1.jpg",
+                name: "Default Image 1",
+                title: "Welcome to Our Store",
+                description: "Discover amazing products",
+              },
+              {
+                id: 2,
+                imageURL: "/images/slider-2.jpg",
+                name: "Default Image 2",
+                title: "Quality Products",
+                description: "Find what you're looking for",
+              },
+            ]);
+          } else {
+            setFallbackImages(images);
+          }
         }
-        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching background and images:", error);
+        // Set default images if Firebase fetch fails
+        setFallbackImages([
+          {
+            id: 1,
+            imageURL: "/images/slider-1.jpg",
+            name: "Default Image 1",
+            title: "Welcome to Our Store",
+            description: "Discover amazing products",
+          },
+          {
+            id: 2,
+            imageURL: "/images/slider-2.jpg",
+            name: "Default Image 2",
+            title: "Quality Products",
+            description: "Find what you're looking for",
+          },
+        ]);
       }
+      setLoading(false);
     };
 
-    fetchImages();
+    fetchBackgroundAndImages();
   }, [featuredProducts]);
 
   var settings = {
@@ -120,6 +156,17 @@ export default function FeaturedProductSlider({ featuredProducts }) {
     );
   }
 
+  // Get background image URL for featured products - prioritize active background, then product background, then default
+  const getFeaturedProductBackground = (product) => {
+    if (activeBackground?.imageURL) {
+      return activeBackground.imageURL;
+    }
+    if (product?.backgroundImageURL) {
+      return product.backgroundImageURL;
+    }
+    return "/images/c.jpg"; // fallback
+  };
+
   // Render featured products slider
   if (featuredProducts && featuredProducts.length > 0) {
     return (
@@ -131,9 +178,7 @@ export default function FeaturedProductSlider({ featuredProducts }) {
                 <div
                   className="flex flex-col-reverse md:flex-row gap-4 p-5 md:px-24 md:py-20 w-full cursor-grab bg-cover bg-center"
                   style={{
-                    backgroundImage: `linear-gradient(rgba(248, 248, 248, 0.9), rgba(248, 248, 248, 0.85)), url('${
-                      product?.backgroundImageURL || "/images/c.jpg"
-                    }')`,
+                    backgroundImage: `linear-gradient(rgba(248, 248, 248, 0.9), rgba(248, 248, 248, 0.85)), url('${getFeaturedProductBackground(product)}')`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                   }}

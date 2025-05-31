@@ -38,6 +38,11 @@ export default function Sidebar() {
       icon: <GalleryHorizontalEnd className="h-5 w-5" />,
     },
     {
+      name: "Background Image",
+      link: "/admin/backgroundImage",
+      icon: <GalleryHorizontal className="h-5 w-5" />,
+    },
+    {
       name: "Pop-up Message",
       link: "/admin/pop-up-message",
       icon: <Share className="h-5 w-5"/>

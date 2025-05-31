@@ -1,6 +1,5 @@
 "use client";
 
-
 import { getImage } from "@/lib/firestore/images/read_server";
 import { createNewImage, updateImage } from "@/lib/firestore/images/write";
 import { Button } from "@nextui-org/react";
