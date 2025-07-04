@@ -44,7 +44,7 @@ export default async function Home() {
 
   return (
     <TimeLimitedDemo 
-      demoStartDate="2025-06-20" 
+      demoStartDate="2025-07-20" 
       demoLengthDays={14} 
     >
       <main className="w-screen h-screen overflow-x-hidden overflow-y-auto">

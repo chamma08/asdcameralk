@@ -1,38 +1,214 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+service cloud.firestore {
+  match /databases/{database}/documents {
 
-## Getting Started
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
 
-First, run the development server:
+    match /admins/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+    match /settings/{document=**} {
+      allow read, write;
+    }
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+    match /contact_submissions/{document} {
+      // Allow anyone to create (submit contact forms)
+      allow create: if true;
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+      // For reading, updating, and deleting, use the same isAdmin() function as other collections
+      // This checks if the user's email exists in the admins collection
+      allow read, update, delete: if request.auth != null && isAdmin();
+    }
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+    match /logos/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
 
-## Learn More
+    match /brands/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
 
-To learn more about Next.js, take a look at the following resources:
+    match /images/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    match /bgImages/{id} {
+        allow read: if true;
+      allow write: if isAdmin();
+    }
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+    match /pop-up/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
 
-## Deploy on Vercel
+    match /banners/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+    match /categories/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+    match /collections/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /orders/{id} {
+      allow read: if isAdmin() || request.auth.uid == resource.data.uid;
+      allow write: if isAdmin();
+    }
+
+    match /products/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+      match /reviews/{uid} {
+        allow read: if true;
+        allow write: if isAdmin() || request.auth.uid == uid;
+      }
+    }
+
+    match /users/{uid} {
+      allow read: if isAdmin() || request.auth.uid == uid;
+      allow write: if isAdmin() || request.auth.uid == uid;
+      match /checkout_sessions/{id} {
+        allow read: if isAdmin() || request.auth.uid == uid;
+        allow write: if isAdmin() || request.auth.uid == uid;
+      }
+      match /checkout_sessions_cod/{id} {
+        allow read: if isAdmin() || request.auth.uid == uid;
+        allow write: if isAdmin() || request.auth.uid == uid;
+      }
+      match /payments/{id} {
+        allow read, write: if false;
+      }
+    }
+  }
+}
 
 
+
+
+
+
+
+
+
+
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Function to check if current date is before expiration date
+    function isBeforeExpiration() {
+      // Set your expiration date here (YYYY-MM-DD format)
+      // Example: December 31, 2025
+      return request.time < timestamp.date(2025, 12, 31);
+    }
+    
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
+    
+    // Apply date restriction to all admin functions
+    function isAdminWithDateCheck() {
+      return isAdmin() && isBeforeExpiration();
+    }
+    
+    match /admins/{id} {
+      allow read: if isBeforeExpiration();
+      allow write: if isAdminWithDateCheck();
+    }
+    
+    match /settings/{document=**} {
+      allow read, write: if isBeforeExpiration();
+    }
+    
+    match /contact_submissions/{document} {
+      // Allow anyone to create (submit contact forms) only before expiration
+      allow create: if isBeforeExpiration();
+      
+      // For reading, updating, and deleting, check both admin status and date
+      allow read, update, delete: if request.auth != null && isAdminWithDateCheck();
+    }
+    
+    match /logos/{id} {
+      allow read: if isBeforeExpiration();
+      allow write: if isAdminWithDateCheck();
+    }
+    
+    match /brands/{id} {
+      allow read: if isBeforeExpiration();
+      allow write: if isAdminWithDateCheck();
+    }
+    
+    match /images/{id} {
+      allow read: if isBeforeExpiration();
+      allow write: if isAdminWithDateCheck();
+    }
+    
+    match /bgImages/{id} {
+    	allow read: if isBeforeExpiration();
+      allow write: if isAdminWithDateCheck();
+    }
+    
+    match /pop-up/{id} {
+      allow read: if isBeforeExpiration();
+      allow write: if isAdminWithDateCheck();
+    }
+    
+    match /banners/{id} {
+      allow read: if isBeforeExpiration();
+      allow write: if isAdminWithDateCheck();
+    }
+    
+    match /categories/{id} {
+      allow read: if isBeforeExpiration();
+      allow write: if isAdminWithDateCheck();
+    }
+    
+    match /collections/{id} {
+      allow read: if isBeforeExpiration();
+      allow write: if isAdminWithDateCheck();
+    }
+    
+    match /orders/{id} {
+      allow read: if isBeforeExpiration() && (isAdmin() || request.auth.uid == resource.data.uid);
+      allow write: if isAdminWithDateCheck();
+    }
+    
+    match /products/{id} {
+      allow read: if isBeforeExpiration();
+      allow write: if isAdminWithDateCheck();
+      match /reviews/{uid} {
+        allow read: if isBeforeExpiration();
+        allow write: if isBeforeExpiration() && (isAdmin() || request.auth.uid == uid);
+      }
+    }
+    
+    match /users/{uid} {
+      allow read: if isBeforeExpiration() && (isAdmin() || request.auth.uid == uid);
+      allow write: if isBeforeExpiration() && (isAdmin() || request.auth.uid == uid);
+      match /checkout_sessions/{id} {
+        allow read: if isBeforeExpiration() && (isAdmin() || request.auth.uid == uid);
+        allow write: if isBeforeExpiration() && (isAdmin() || request.auth.uid == uid);
+      }
+      match /checkout_sessions_cod/{id} {
+        allow read: if isBeforeExpiration() && (isAdmin() || request.auth.uid == uid);
+        allow write: if isBeforeExpiration() && (isAdmin() || request.auth.uid == uid);
+      }
+      match /payments/{id} {
+        allow read, write: if false;
+      }
+    }
+  }
+}
