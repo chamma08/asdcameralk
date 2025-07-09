@@ -249,7 +249,7 @@ export default function Footer() {
             </motion.div>
           </div>
           <p className="text-center mt-8 border-t-2 border-black pt-8">
-            AIRSTUDIOS © 2025 | Rights Reserved
+            Matheesha Dissanayake © 2025 | Rights Reserved
           </p>
         </div>
       </footer>
